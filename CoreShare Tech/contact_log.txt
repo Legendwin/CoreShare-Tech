@@ -1,0 +1,14 @@
+TO: admin@coresharetech.com
+SUBJECT: New Contact Message: General Inquiry
+MESSAGE: You have received a new message from New student (2425402875@live.gctu.edu.gh).
+
+Subject: General Inquiry
+
+Message:
+Checking again
+
+Logged In User ID: 2
+HEADERS: From: no-reply@coresharetech.com
+Reply-To: 2425402875@live.gctu.edu.gh
+
+

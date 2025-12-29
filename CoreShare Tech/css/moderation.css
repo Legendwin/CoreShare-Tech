@@ -1,0 +1,174 @@
+/* Admin Specific Styles */
+.overview-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.admin-card {
+    background: var(--bg-surface);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 10px;
+}
+
+/* Chart Layout */
+.chart-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 20px;
+    height: 100%;
+}
+
+/* Pie Chart (Pure CSS) */
+.pie-chart {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+/* Inner Circle for Donut Effect */
+.pie-chart::after {
+    content: "";
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    background: var(--bg-surface);
+    border-radius: 50%;
+    top: 25px;
+    left: 25px;
+}
+
+/* Legend/Stats List */
+.stats-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.stats-list li {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.dot-blue {
+    background: var(--primary-blue);
+}
+
+.dot-light {
+    background: #DBEAFE;
+}
+
+.dot-red {
+    background: #EF4444;
+}
+
+/* Review Action Box */
+.review-box {
+    background: #F8FAFC;
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: auto;
+}
+
+.review-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.review-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-approve {
+    flex: 1;
+    background-color: var(--success);
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-reject {
+    flex: 1;
+    background-color: #EF4444;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ------------------------
+    MOBILE RESPONSIVE
+------------------------ */
+@media (max-width: 768px) {
+    /* Stack charts and stats vertically */
+    .chart-row {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .pie-chart {
+        margin-bottom: 20px;
+    }
+
+    .stats-list {
+        width: 100%;
+    }
+
+    .stats-list li {
+        justify-content: center; /* Center align text */
+    }
+
+    /* Stack cards in overview */
+    .overview-section {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Ensure table text is readable */
+    .data-table th, .data-table td {
+        font-size: 0.85rem;
+        padding: 12px 10px;
+    }
+}

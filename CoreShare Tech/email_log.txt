@@ -1,0 +1,24 @@
+TO: lambart67@gmail.com
+SUBJECT: Password Reset Request
+MESSAGE: Click here to reset: http://localhost/CoreShare%20Tech/html/reset.php?token=d2903fa030f8fadbc74f908b706493740caf727472b61a7d4b42e7c08c3f6fc1&email=lambart67%40gmail.com
+This link expires in 30 minutes.
+HEADERS: From: no-reply@coresharetech.com
+
+TO: lambart67@gmail.com
+SUBJECT: Password Reset Request
+MESSAGE: Click here to reset: http://localhost/CoreShare%20Tech/html/reset.php?token=e7ab095f5f5bfca8e97a2686939f8b771898f1ff490fedb683a75a5e8a7e8772&email=lambart67%40gmail.com
+This link expires in 30 minutes.
+HEADERS: From: no-reply@coresharetech.com
+
+TO: 2425402875@live.gctu.edu.gh
+SUBJECT: Password Reset Request
+MESSAGE: Click here to reset: http://localhost/CoreShare%20Tech/html/reset.php?token=cc0d73001b499916d0f380be385243c144f21502377a8e0e5d6b3065ff2c5a02&email=2425402875%40live.gctu.edu.gh
+This link expires in 15 minutes.
+HEADERS: From: no-reply@coresharetech.com
+
+TO: lambart67@gmail.com
+SUBJECT: Password Reset Request
+MESSAGE: Click here to reset: http://localhost/CoreShare%20Tech/html/reset.php?token=e77de9020d617e637160fb2e9ddd52071d7fbb9313a671ba4b291f7aa2d8c33f&email=lambart67%40gmail.com
+This link expires in 15 minutes.
+HEADERS: From: no-reply@coresharetech.com
+

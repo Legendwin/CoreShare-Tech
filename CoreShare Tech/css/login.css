@@ -1,0 +1,89 @@
+/* Modern Login Styles */
+* { box-sizing: border-box; }
+
+:root {
+    --primary-blue: #3B82F6;
+    --primary-dark: #2563EB;
+    --bg-light: #F1F5F9;
+    --white: #FFFFFF;
+    --text-gray: #64748B;
+    --text-dark: #1E293B;
+    --border-color: #E2E8F0;
+    --success: #10B981;
+    --warning: #F59E0B;
+}
+
+body {
+    background-color: var(--bg-light);
+    font-family: 'Inter', system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* --- TOAST NOTIFICATIONS --- */
+.toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+.toast { min-width: 300px; background: white; padding: 16px 20px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-left: 5px solid var(--primary-blue); display: flex; align-items: center; justify-content: space-between; opacity: 0; transform: translateX(100%); animation: slideIn 0.3s forwards; }
+.toast.success { border-left-color: var(--success); }
+.toast.error { border-left-color: #EF4444; }
+.toast.warning { border-left-color: var(--warning); }
+.toast-message { color: var(--text-dark); font-size: 0.95rem; font-weight: 500; }
+.toast-close { background: none; border: none; color: var(--text-gray); cursor: pointer; margin-left: 10px; font-size: 1.2rem; }
+@keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+@keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
+
+/* --- CUSTOM MODALS (CRITICAL FIX: Hidden by default) --- */
+.modal-overlay { 
+    display: none; /* This line prevents the modal from blocking clicks */
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    z-index: 3000; align-items: center; justify-content: center; 
+}
+/* Only show when class 'open' is added by JS */
+.modal-overlay.open { display: flex; }
+
+.modal-content { 
+    background: white; padding: 30px; border-radius: 16px; 
+    width: 90%; max-width: 400px; text-align: center; 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: popIn 0.3s ease;
+}
+@keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+.modal-content h3 { margin-top: 0; color: var(--text-dark); margin-bottom: 15px; }
+.btn-card { flex: 1; margin: 0 5px; padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
+.modal-actions { display: flex; width: 100%; margin-top: 20px; }
+
+/* Login Container Styles */
+.login-container { width: 420px; max-width: 90%; background: var(--white); border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid rgba(255,255,255,0.5); }
+.header { background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark)); padding: 32px 25px 20px; text-align: center; color: white; }
+.header h2 { margin: 0; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; }
+.tabs { display: flex; padding: 0 25px; gap: 12px; background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark)); padding-bottom: 0; }
+.tab-btn { background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.9); padding: 12px 24px; border-radius: 12px 12px 0 0; cursor: pointer; font-weight: 600; flex: 1; transition: all 0.2s; font-size: 0.95rem; }
+.tab-btn:hover { background: rgba(255,255,255,0.25); }
+.tab-btn.active { background: var(--white); color: var(--primary-blue); position: relative; top: 1px; }
+.form-body { padding: 40px 32px; }
+.input-group { margin-bottom: 24px; }
+.input-group label { display: block; margin-bottom: 8px; color: var(--text-dark); font-size: 0.9rem; font-weight: 500; }
+.password-wrapper { position: relative; width: 100%; }
+.input-group input { width: 100%; padding: 14px; padding-right: 45px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; transition: all 0.2s; color: var(--text-dark); }
+.input-group input:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+.toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-gray); z-index: 10; display: flex; align-items: center; justify-content: center; }
+.toggle-password:hover { color: var(--primary-blue); }
+.options-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; font-size: 0.9rem; color: var(--text-gray); }
+.switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #CBD5E1; border-radius: 34px; transition: .3s; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .3s; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+input:checked + .slider { background-color: var(--primary-blue); }
+input:checked + .slider:before { transform: translateX(18px); }
+.btn-submit { width: 100%; padding: 16px; background-color: var(--primary-dark); color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.1s, background-color 0.2s; }
+.btn-submit:hover { background-color: #1d4ed8; transform: translateY(-1px); }
+.btn-submit:active { transform: translateY(0); }
+.hidden { display: none; }
+select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; background-color: white; color: var(--text-gray); cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 1em; }
+.footer-link { text-align: center; margin-top: 24px; font-size: 0.9rem; }
+.footer-link a { color: var(--primary-blue); text-decoration: none; font-weight: 500; }
+.footer-link a:hover { text-decoration: underline; }

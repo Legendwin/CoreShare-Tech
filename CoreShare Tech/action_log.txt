@@ -1,0 +1,8 @@
+TO: 2425402875@live.gctu.edu.gh
+SUBJECT: CoreShare Tech: Resource Rejected
+MESSAGE: Hello New student,
+
+Your resource 'Project proposal page design' has been reviewed.
+Status: Rejected
+HEADERS: From: no-reply@coresharetech.com
+
