@@ -24,7 +24,8 @@ $rejPct = round(($stats['rejected'] / $total) * 100);
         <aside class="sidebar" id="sidebar">
             <div class="brand">
                 <span>CoreShare <strong>Tech</strong></span>
-                <button class="sidebar-close-btn" id="sidebar-close">×</button>
+                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
+                <button class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open')">×</button>
             </div>
             <nav class="nav" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
                 <a href="index.php" class="nav-link">Dashboard</a>
@@ -48,7 +49,7 @@ $rejPct = round(($stats['rejected'] / $total) * 100);
                 <div class="admin-card">
                     <div class="card-header-title">Content Status Overview</div>
                     <div class="chart-row">
-                        <div class="pie-chart" style="background: conic-gradient(var(--primary-blue) 0% <?php echo $pubPct; ?>%, #DBEAFE <?php echo $pubPct; ?>% <?php echo $pubPct + $penPct; ?>%, #EF4444 <?php echo $pubPct + $penPct; ?>% 100%);"></div>
+                        <div class="pie-chart" style="background: conic-gradient(var(--primary-blue) 0% <?php echo $pubPct; ?>%, #94A3B8 <?php echo $pubPct; ?>% <?php echo $pubPct + $penPct; ?>%, #EF4444 <?php echo $pubPct + $penPct; ?>% 100%);"></div>
                         <ul class="stats-list">
                             <li><span class="dot dot-blue"></span> <?php echo $pubPct; ?>% Published (<?php echo $stats['published']; ?>)</li>
                             <li><span class="dot dot-light"></span> <?php echo $penPct; ?>% Pending (<?php echo $stats['pending']; ?>)</li>
@@ -58,8 +59,8 @@ $rejPct = round(($stats['rejected'] / $total) * 100);
                 </div>
                 <div class="admin-card">
                     <div class="card-header-title">Quick Actions</div>
-                    <div class="review-box" style="background: white; padding:0;">
-                        <p style="color:var(--text-muted);">Review the queue below to update item status.</p>
+                    <div class="review-box">
+                        <p style="color:var(--text-muted); margin:0;">Review the queue below to update item status.</p>
                     </div>
                     <div style="margin-top: 20px; font-size: 0.9rem; color: var(--text-muted);"><strong><?php echo $stats['pending']; ?></strong> items currently require attention.</div>
                 </div>

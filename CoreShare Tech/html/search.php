@@ -67,7 +67,11 @@ $result = $stmt->get_result();
 </head>
 <body>
     <aside class="sidebar" id="sidebar">
-        <div class="brand"><span>CoreShare <strong>Tech</strong></span><button class="sidebar-close-btn" id="sidebar-close">×</button></div>
+        <div class="brand">
+                <span>CoreShare <strong>Tech</strong></span>
+                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
+                <button class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open')">×</button>
+            </div>
         <nav class="nav" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
             <a href="index.php" class="nav-link">Dashboard</a>
             <a href="search.php" class="nav-link active">Search</a>
@@ -147,7 +151,7 @@ $result = $stmt->get_result();
             <input type="hidden" name="programme" value="<?php echo htmlspecialchars($progFilter); ?>">
             <input type="hidden" name="level" value="<?php echo htmlspecialchars($levelFilter); ?>">
             <input type="hidden" name="rating" value="<?php echo $ratingFilter; ?>">
-            <div class="large-search-bar"><span class="search-icon">🔍</span><input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search resources, courses..."></div>
+            <div class="large-search-bar"><span><img src="../images/Search_Magnifying_Glass.svg" alt="Search"></span><input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search resources, courses..."></div>
         </form>
 
         <div class="grid-container">

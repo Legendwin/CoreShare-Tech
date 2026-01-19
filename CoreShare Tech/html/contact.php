@@ -17,7 +17,11 @@ $userRole = $isLoggedIn ? $_SESSION['user_role'] : 'student';
 </head>
 <body>
     <aside class="sidebar" id="sidebar">
-        <div class="brand"><span>CoreShare <strong>Tech</strong></span><button class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open')">×</button></div>
+        <div class="brand">
+            <span>CoreShare <strong>Tech</strong></span>
+            <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
+            <button class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open')">×</button>
+        </div>
         <nav class="nav" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
             <a href="index.php" class="nav-link">Dashboard</a>
             <a href="search.php" class="nav-link">Search</a>
@@ -46,17 +50,17 @@ $userRole = $isLoggedIn ? $_SESSION['user_role'] : 'student';
 
         <section class="contact-info-row">
             <div class="info-card">
-                <span class="info-icon">📧</span>
+                <span class="info-icon"><img src="../images/Mail.svg" alt="Mail SVG"></span>
                 <div class="info-title">Email Us</div>
                 <div class="info-text">support@coresharetech.com</div>
             </div>
             <div class="info-card">
-                <span class="info-icon">📍</span>
+                <span class="info-icon"><img src="../images/Map_Pin.svg" alt="Location SVG"></span>
                 <div class="info-title">Visit Us</div>
                 <div class="info-text">GCTU Main Campus, Tesano - Accra</div>
             </div>
             <div class="info-card">
-                <span class="info-icon">📞</span>
+                <span class="info-icon"><img src="../images/Phone.svg" alt="Phone SVG"></span>
                 <div class="info-title">Call Us</div>
                 <div class="info-text">+233 55 123 4567</div>
             </div>

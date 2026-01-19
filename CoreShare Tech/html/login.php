@@ -1,8 +1,7 @@
 <?php
 session_start();
-require '../php/db_connect.php'; // Ensures token is generated
+require '../php/db_connect.php'; 
 
-// Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit;
@@ -15,6 +14,7 @@ if (isset($_SESSION['user_id'])) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login - CoreShare Tech</title>
         <link rel="icon" type="image/png" href="../images/Gemini_Generated_Image_69zr6i69zr6i69zr.png" sizes="32x32">
+        <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
         <link rel="stylesheet" href="../css/login.css?v=<?php echo time(); ?>">
     </head>
     <body>
@@ -23,6 +23,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="login-container">
             <div class="header">
                 <h2>CoreShare Tech</h2>
+                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
             </div>
             <div class="tabs">
                 <button class="tab-btn active" id="tab-login">Login</button>
@@ -71,8 +72,7 @@ if (isset($_SESSION['user_id'])) {
                         <select id="role-select" name="role">
                             <option value="student">Student</option>
                             <option value="educator">Educator</option>
-                            <option value="admin">Administrator</option>
-                        </select>
+                            </select>
                     </div>
 
                     <div class="input-group">
@@ -98,8 +98,8 @@ if (isset($_SESSION['user_id'])) {
                     <button type="submit" class="btn-submit">Create Account</button>
                 </form>
 
-                <div class="footer-link" style="margin-top: 30px; border-top: 1px solid #E2E8F0; padding-top: 20px;">
-                    <a href="index.php" style="color: #64748B; font-size: 0.9rem;">← Back to Dashboard</a>
+                <div class="footer-link" style="margin-top: 30px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+                    <a href="index.php" style="color: var(--text-muted); font-size: 0.9rem;">← Back to Dashboard</a>
                 </div>
             </div>
         </div>

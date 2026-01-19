@@ -11,7 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $token = $_GET['token'];
         $email = $_GET['email'];
         
-        // Optional: Pre-check validity to show error immediately (UX improvement)
         $token_hash = hash("sha256", $token);
         $current_time = date("Y-m-d H:i:s");
         
@@ -41,24 +40,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $confirm_pass = $_POST['confirm_password'];
 
     if ($new_pass !== $confirm_pass) {
-        // Pass error back to self
         header("Location: reset.php?token=$token&email=$email&error=Passwords do not match");
         exit;
     }
 
     $token_hash = hash("sha256", $token);
-    
-    // CRITICAL FIX: Use PHP time to ensure timezone consistency
     $current_time = date("Y-m-d H:i:s");
 
-    // 3. Verify Token and Expiry using PHP time
     $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND reset_token = ? AND reset_expires > ?");
     $stmt->bind_param("sss", $email, $token_hash, $current_time);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        // 4. Update Password & Clear Token (Invalidate immediately)
         $new_hash = password_hash($new_pass, PASSWORD_DEFAULT);
         
         $updateStmt = $conn->prepare("UPDATE users SET password_hash = ?, reset_token = NULL, reset_expires = NULL WHERE email = ?");
@@ -70,7 +64,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         } else {
             $updateStmt->close();
-            // Redirect with specific error
             header("Location: reset.php?token=$token&email=$email&error=Database update failed");
             exit;
         }
@@ -87,15 +80,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Set New Password - CoreShare Tech</title>
     <link rel="icon" type="image/png" href="../images/Gemini_Generated_Image_69zr6i69zr6i69zr.png" sizes="32x32">   
-    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../css/login.css?v=<?php echo time(); ?>">
 </head>
 <body>
     <div class="login-container">
-        <div class="header"><h2>Set New Password</h2></div>
+        <div class="header">
+            <h2>Set New Password</h2>
+            <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
+        </div>
         <div class="form-body">
             
             <?php if (isset($_GET['error'])): ?>
-                <div style="background:#FEE2E2; color:#B91C1C; padding:10px; border-radius:8px; margin-bottom:15px; font-size:0.9rem; text-align:center;">
+                <div style="background:var(--bg-surface); border:1px solid #EF4444; color:#EF4444; padding:10px; border-radius:8px; margin-bottom:15px; font-size:0.9rem; text-align:center;">
                     <?php echo htmlspecialchars($_GET['error']); ?>
                 </div>
             <?php endif; ?>

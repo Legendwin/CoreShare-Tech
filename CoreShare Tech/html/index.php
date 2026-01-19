@@ -41,7 +41,11 @@ if ($isLoggedIn) {
 	</head>
 	<body>
 		<aside class="sidebar" id="sidebar">
-			<div class="brand"><span>CoreShare <strong>Tech</strong></span><button class="sidebar-close-btn" id="sidebar-close">×</button></div>
+			<div class="brand">
+                <span>CoreShare <strong>Tech</strong></span>
+                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
+                <button class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open')">×</button>
+            </div>
 			<nav class="nav" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
 				<a href="index.php" class="nav-link active">Dashboard</a>
 				<a href="search.php" class="nav-link">Search</a>
@@ -63,10 +67,10 @@ if ($isLoggedIn) {
 			<button id="menu-toggle" class="mobile-menu-btn">☰</button>
 			<header class="dashboard-header">
                 <div class="header-title">
-                    <h1><?php echo ucfirst($userRole) . ' Dashboard'; ?></h1>
+                    <h1><?php echo $isLoggedIn ? ucfirst($userRole) . ' Dashboard' : 'Guest Dashboard'; ?></h1>
                     <p style="color:var(--text-gray); font-size:0.9rem;">Welcome, <?php echo htmlspecialchars($userName); ?></p>
                 </div>
-                <div class="search-bar"><form action="search.php" method="GET" style="width:100%; display:flex;"><input type="text" name="q" placeholder="Search notes, papers, or study guides..." style="flex:1;"><button type="submit" style="background:none; border:none; cursor:pointer;"><span style="color:var(--primary-blue); font-weight:bold;">🔍</span></button></form></div>
+                <div class="search-bar"><form action="search.php" method="GET" style="width:100%; display:flex;"><input type="text" name="q" placeholder="Search notes, papers, or study guides..." style="flex:1;"><button type="submit" style="background:none; border:none; cursor:pointer;"><span><img src="../images/Search_Magnifying_Glass.svg" alt="Search"></span></button></form></div>
             </header>
 
             <section class="stats-row">

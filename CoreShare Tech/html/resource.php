@@ -16,7 +16,11 @@ $isLoggedIn = isset($_SESSION['user_id']);
   </head>
   <body>
       <aside class="sidebar" id="sidebar">
-        <div class="brand"><span>CoreShare <strong>Tech</strong></span><button class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open')">×</button></div>
+        <div class="brand">
+            <span>CoreShare <strong>Tech</strong></span>
+            <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
+            <button class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open')">×</button>
+        </div>
         <nav class="nav" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
             <a href="index.php" class="nav-link">Dashboard</a>
             <a href="search.php" class="nav-link">Search</a>
@@ -39,7 +43,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
           <header class="dashboard-header">
               <div class="header-title"><h1>University Library</h1><p style="color:var(--text-gray); font-size:0.9rem;">Browse lecture notes, papers, and study guides.</p></div>
               <div class="search-actions" style="display:flex; gap:15px; align-items:center; flex:1; justify-content: flex-end;">
-                  <div class="search-bar" style="width: 100%; max-width: 400px;"><form action="search.php" method="GET" style="width:100%; display:flex; align-items:center;"><input type="text" name="q" placeholder="Filter by course code, topic..." style="flex:1; border:none; outline:none; background:transparent;"><button type="submit" style="background:none; border:none; cursor:pointer; padding:0;"><span style="color:var(--primary-blue); font-weight:bold; font-size:1.2rem;">🔍</span></button></form></div>
+                  <div class="search-bar" style="width: 100%; max-width: 400px;"><form action="search.php" method="GET" style="width:100%; display:flex; align-items:center;"><input type="text" name="q" placeholder="Filter by course code, topic..." style="flex:1; border:none; outline:none; background:transparent;"><button type="submit" style="background:none; border:none; cursor:pointer; padding:0;"><span><img src="../images/Search_Magnifying_Glass.svg" alt="Search"></span></button></form></div>
                   
                   <button class="btn-card" onclick="openUploadModal()" style="width:auto; padding: 12px 20px; white-space:nowrap; background-color: var(--success); color:white; box-shadow: var(--shadow-sm); font-weight: 700;">+ Add Resource</button>
               </div>
@@ -130,7 +134,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                         </div>
                     </div>
                     
-                    <div class="modal-col-right" style="background:#fff;">
+                    <div class="modal-col-right">
                         <div class="upload-placeholder" id="upload-placeholder">
                             <div class="upload-placeholder-icon">⬅️</div>
                             <div class="upload-placeholder-text">Select a file to continue details</div>
@@ -176,7 +180,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                                     <label class="category-label">Programme</label>
                                     <select class="category-select" name="subject" required>
                                         <option value="" disabled selected>Select Programme...</option>
-                                        <optgroup label="FoCIS">
+                                        <optgroup label="Faculty of Computing & Info Systems (FoCIS)">
                                             <option value="BSc Computer Science">BSc. Computer Science</option>
                                             <option value="BSc IT">BSc. Information Technology</option>
                                             <option value="BSc Software Engineering">BSc. Software Engineering</option>
@@ -204,7 +208,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                                         </optgroup>
                                     </select>
                                 </div>
-                     <div class="upload-actions">
+                                <div class="upload-actions">
                                     <button type="submit" class="btn-card btn-upload">Upload Resource</button>
                                     <button type="button" id="btn-reset-upload" class="btn-card btn-cancel">Cancel</button>
                                 </div>
