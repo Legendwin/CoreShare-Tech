@@ -1,7 +1,7 @@
 <?php
 session_start();
 require '../php/db_connect.php';
-if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') { header("Location: index.php"); exit; }
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') { header("Location: dashboard.php"); exit; }
 $statsQuery = "SELECT COUNT(*) as total, SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) as published, SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending, SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected FROM resources";
 $statsResult = $conn->query($statsQuery);
 $stats = $statsResult->fetch_assoc();
@@ -25,20 +25,21 @@ $rejPct = round(($stats['rejected'] / $total) * 100);
             <div class="brand">
                 <span>CoreShare <strong>Tech</strong></span>
                 <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
-                <button class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open')">×</button>
             </div>
-            <nav class="nav" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
-                <a href="index.php" class="nav-link">Dashboard</a>
-                <a href="search.php" class="nav-link">Search</a>
-                <a href="resource.php" class="nav-link">Resource</a>
-                <a href="contributions.php" class="nav-link">Contributions</a>
-                <a href="contact.php" class="nav-link">Contact</a>
-                <a href="moderation.php" class="nav-link active">Moderation</a>
+            <nav class="nav" style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
+                <a href="./index.php" class="nav-link">Home</a>
+                <a href="./dashboard.php" class="nav-link">Dashboard</a>
+                <a href="./search.php" class="nav-link">Search</a>
+                <a href="./resource.php" class="nav-link">Resource</a>
+                <a href="./contributions.php" class="nav-link">Contributions</a>
+                <a href="./contact.php" class="nav-link">Contact</a>
+                <a href="./sources.php" class="nav-link">Other Resources</a>
+                <a href="./moderation.php" class="nav-link active">Moderation</a>
                 <a href="../php/logout.php" class="nav-link" style="color:#EF4444;">Logout</a>
             </nav>
         </aside>
         <main class="main-content">
-            <button id="menu-toggle" class="mobile-menu-btn">☰</button>
+            <button id="menu-toggle" class="mobile-menu-btn"><span id="toggle-icon">☰</span></button>
             <header class="dashboard-header">
                 <div class="header-title">
                     <h1>Admin Moderation</h1>

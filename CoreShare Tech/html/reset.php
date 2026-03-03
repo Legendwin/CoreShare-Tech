@@ -75,55 +75,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Set New Password - CoreShare Tech</title>
-    <link rel="icon" type="image/png" href="../images/Gemini_Generated_Image_69zr6i69zr6i69zr.png" sizes="32x32">   
-    <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="../css/login.css?v=<?php echo time(); ?>">
-</head>
-<body>
-    <div class="login-container">
-        <div class="header">
-            <h2>Set New Password</h2>
-            <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
-        </div>
-        <div class="form-body">
-            
-            <?php if (isset($_GET['error'])): ?>
-                <div style="background:var(--bg-surface); border:1px solid #EF4444; color:#EF4444; padding:10px; border-radius:8px; margin-bottom:15px; font-size:0.9rem; text-align:center;">
-                    <?php echo htmlspecialchars($_GET['error']); ?>
-                </div>
-            <?php endif; ?>
-
-            <form action="reset.php" method="POST">
-                <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
-                <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Set New Password - CoreShare Tech</title>
+        <link rel="icon" type="image/png" href="../images/Gemini_Generated_Image_69zr6i69zr6i69zr.png" sizes="32x32">   
+        <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" href="../css/login.css?v=<?php echo time(); ?>">
+    </head>
+    <body>
+        <div class="login-container">
+            <div class="header">
+                <h2>Set New Password</h2>
+                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
+            </div>
+            <div class="form-body">
                 
-                <div class="input-group password-group">
-                    <label>New Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" name="password" id="new-pass" placeholder="Enter new password" required>
-                        <span class="toggle-password" onclick="togglePassword('new-pass', this)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </span>
+                <?php if (isset($_GET['error'])): ?>
+                    <div style="background:var(--bg-surface); border:1px solid #EF4444; color:#EF4444; padding:10px; border-radius:8px; margin-bottom:15px; font-size:0.9rem; text-align:center;">
+                        <?php echo htmlspecialchars($_GET['error']); ?>
                     </div>
-                </div>
-                <div class="input-group password-group">
-                    <label>Confirm Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" name="confirm_password" id="confirm-pass" placeholder="Confirm new password" required>
-                        <span class="toggle-password" onclick="togglePassword('confirm-pass', this)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </span>
-                    </div>
-                </div>
-                <button type="submit" class="btn-submit">Update Password</button>
-            </form>
-        </div>
-    </div>
+                <?php endif; ?>
 
-    <script src="../js/script.js?v=<?php echo time(); ?>"></script>
-</body>
+                <form action="reset.php" method="POST">
+                    <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
+                    <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
+                    
+                    <div class="input-group password-group">
+                        <label>New Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" name="password" id="new-pass" placeholder="Enter new password" required>
+                            <span class="toggle-password" onclick="togglePassword('new-pass', this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="input-group password-group">
+                        <label>Confirm Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" name="confirm_password" id="confirm-pass" placeholder="Confirm new password" required>
+                            <span class="toggle-password" onclick="togglePassword('confirm-pass', this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">Update Password</button>
+                </form>
+            </div>
+        </div>
+
+        <script src="../js/script.js?v=<?php echo time(); ?>"></script>
+    </body>
 </html>

@@ -130,6 +130,10 @@
     margin-bottom: 30px;
 }
 
+.large-search-bar img {
+    margin: 4px 0 0 -6px;
+}
+
 .large-search-bar input {
     background: transparent;
     border: none;

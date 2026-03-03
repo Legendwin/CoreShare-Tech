@@ -1,53 +1,58 @@
-CREATE DATABASE IF NOT EXISTS coreshare_db;
-USE coreshare_db;
+-- CoreShare Tech Database Schema
 
--- Users Table (Updated with Reset Token support)
-CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    role ENUM('student', 'educator', 'admin') DEFAULT 'student',
-    reset_token VARCHAR(64) DEFAULT NULL,
-    reset_expires DATETIME DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- 1. Users Table
+CREATE TABLE IF NOT EXISTS `users` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `full_name` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(100) NOT NULL UNIQUE,
+    `password_hash` VARCHAR(255) NOT NULL,
+    `role` ENUM('student', 'educator', 'admin') DEFAULT 'student',
+    `plan` ENUM('free', 'pro', 'semester', 'exam_pass') DEFAULT 'free',
+    `plan_expires` DATETIME DEFAULT NULL,
+    `reset_token` VARCHAR(64) DEFAULT NULL,
+    `reset_expires` DATETIME DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Resources Table
-CREATE TABLE IF NOT EXISTS resources (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    course_name VARCHAR(100),
-    type VARCHAR(50) NOT NULL,
-    subject VARCHAR(50) NOT NULL,
-    grade_level VARCHAR(50) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,
-    uploaded_by INT,
-    downloads INT DEFAULT 0,
-    status ENUM('pending', 'published', 'rejected') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (uploaded_by) REFERENCES users(id)
-);
+-- 2. Resources Table
+CREATE TABLE IF NOT EXISTS `resources` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) NOT NULL,
+    `course_name` VARCHAR(100) DEFAULT NULL,
+    `subject` VARCHAR(100) DEFAULT NULL,
+    `type` VARCHAR(50) DEFAULT NULL,
+    `grade_level` VARCHAR(50) DEFAULT NULL,
+    `programme` VARCHAR(100) DEFAULT NULL,
+    `file_path` VARCHAR(255) NOT NULL,
+    `uploaded_by` INT(11) NOT NULL,
+    `status` ENUM('pending', 'published', 'rejected') DEFAULT 'pending',
+    `downloads` INT(11) DEFAULT 0,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`uploaded_by`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Reviews Table
-CREATE TABLE IF NOT EXISTS reviews (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    resource_id INT NOT NULL,
-    user_id INT NOT NULL,
-    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
-    comment TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (resource_id) REFERENCES resources(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
+-- 3. Reviews Table
+CREATE TABLE IF NOT EXISTS `reviews` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `resource_id` INT(11) NOT NULL,
+    `user_id` INT(11) NOT NULL,
+    `rating` INT(11) NOT NULL CHECK (`rating` >= 1 AND `rating` <= 5),
+    `comment` TEXT DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`resource_id`) REFERENCES `resources`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS messages (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT DEFAULT NULL,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    subject VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
-);
+-- 4. User Counters (Limits Tracking)
+CREATE TABLE IF NOT EXISTS `user_counters` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL,
+    `downloads_today` INT(11) DEFAULT 0,
+    `downloads_date` DATE DEFAULT NULL,
+    `uploads_count` INT(11) DEFAULT 0,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

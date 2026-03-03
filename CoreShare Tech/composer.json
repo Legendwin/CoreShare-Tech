@@ -1,0 +1,7 @@
+{
+    "name": "coreshare-tech/project",
+    "description": "CoreShare Tech Project",
+    "require": {
+        "phpmailer/phpmailer": "^7.0"
+    }
+}

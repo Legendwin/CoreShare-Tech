@@ -3,7 +3,7 @@ session_start();
 require '../php/db_connect.php'; 
 
 if (isset($_SESSION['user_id'])) {
-    header("Location: index.php");
+    header("Location: dashboard.php");
     exit;
 }
 ?>
@@ -21,9 +21,11 @@ if (isset($_SESSION['user_id'])) {
         <div class="toast-container"></div>
         
         <div class="login-container">
-            <div class="header">
-                <h2>CoreShare Tech</h2>
-                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
+            <div class="header" style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:20px;">
+                    <h2 style="margin:0;">CoreShare Tech</h2>
+                    <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
+                </div>
             </div>
             <div class="tabs">
                 <button class="tab-btn active" id="tab-login">Login</button>
@@ -70,6 +72,7 @@ if (isset($_SESSION['user_id'])) {
                     <div class="input-group">
                         <label>I am a...</label>
                         <select id="role-select" name="role">
+                            <option value="student">Admin</option>
                             <option value="student">Student</option>
                             <option value="educator">Educator</option>
                             </select>
@@ -99,7 +102,7 @@ if (isset($_SESSION['user_id'])) {
                 </form>
 
                 <div class="footer-link" style="margin-top: 30px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
-                    <a href="index.php" style="color: var(--text-muted); font-size: 0.9rem;">← Back to Dashboard</a>
+                    <a href="./dashboard.php" style="color: var(--text-muted); font-size: 0.9rem;">← Back to Dashboard</a>
                 </div>
             </div>
         </div>

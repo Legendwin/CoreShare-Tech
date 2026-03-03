@@ -1,152 +1,174 @@
 <?php
 session_start();
-// ALLOW GUEST ACCESS
-require '../php/db_connect.php';
+require_once '../php/db_connect.php';
 
 $isLoggedIn = isset($_SESSION['user_id']);
-$userId = $isLoggedIn ? $_SESSION['user_id'] : 0;
-$userName = $isLoggedIn ? $_SESSION['user_name'] : 'Guest';
-$userRole = $isLoggedIn ? $_SESSION['user_role'] : 'student';
+$userRole = $isLoggedIn ? $_SESSION['user_role'] : 'guest';
 
-// Initialize stats to 0 for guests
-$totalDownloads = 0; $totalResources = 0; $avgRating = "0.0"; $totalReviews = 0;
+// Include the new subscription tracker (This line does all the hard work!)
+require_once '../php/check_plan.php';
 
-if ($isLoggedIn) {
-    $downloadResult = $conn->query("SELECT SUM(downloads) as total FROM resources WHERE uploaded_by = '$userId'");
-    $row = $downloadResult->fetch_assoc();
-    $totalDownloads = $row['total'] ? $row['total'] : 0;
-
-    $resCountResult = $conn->query("SELECT COUNT(*) as count FROM resources WHERE uploaded_by = '$userId' AND status = 'published'");
-    $totalResources = $resCountResult->fetch_assoc()['count'];
-
-    $avgRatingSql = "SELECT AVG(rev.rating) as avg_rating FROM reviews rev JOIN resources res ON rev.resource_id = res.id WHERE res.uploaded_by = '$userId'";
-    $avgRatingResult = $conn->query($avgRatingSql);
-    $avgData = $avgRatingResult->fetch_assoc();
-    $avgRating = $avgData['avg_rating'] ? number_format($avgData['avg_rating'], 1) : "0.0";
-    
-    $revCountResult = $conn->query("SELECT COUNT(*) as count FROM reviews WHERE user_id = '$userId'");
-    $totalReviews = $revCountResult->fetch_assoc()['count'];
+// Fetch Real-time Quick Stats
+$totalResources = 0; $totalDownloads = 0; $totalContributors = 0;
+$statsQuery = "SELECT COUNT(id) as total_res, SUM(downloads) as total_dl, COUNT(DISTINCT uploaded_by) as total_contrib FROM resources WHERE status='published'";
+if ($statsResult = $conn->query($statsQuery)) {
+    $row = $statsResult->fetch_assoc();
+    $totalResources = $row['total_res'] ? $row['total_res'] : 0;
+    $totalDownloads = $row['total_dl'] ? $row['total_dl'] : 0;
+    $totalContributors = $row['total_contrib'] ? $row['total_contrib'] : 0;
 }
 ?>
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>CoreShare Tech - Dashboard</title>
-		<link rel="icon" type="image/png" href="../images/Gemini_Generated_Image_69zr6i69zr6i69zr.png" sizes="32x32">
-		<link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
-        <script>const USER_IS_LOGGED_IN = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;</script>
-	</head>
-	<body>
-		<aside class="sidebar" id="sidebar">
-			<div class="brand">
-                <span>CoreShare <strong>Tech</strong></span>
-                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
-                <button class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open')">×</button>
-            </div>
-			<nav class="nav" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
-				<a href="index.php" class="nav-link active">Dashboard</a>
-				<a href="search.php" class="nav-link">Search</a>
-				<a href="resource.php" class="nav-link">Resource</a>
-				<a href="contributions.php" class="nav-link">Contributions</a>
-				<a href="contact.php" class="nav-link">Contact</a>
-				<?php if($isLoggedIn && isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin'): ?>
-                	<a href="moderation.php" class="nav-link">Moderation</a>
-				<?php endif; ?>
-                <?php if($isLoggedIn): ?>
-				    <a href="../php/logout.php" class="nav-link" style="color:#EF4444;">Logout</a>
-                <?php else: ?>
-                    <a href="login.php" class="nav-link" style="color:var(--primary-blue); font-weight:700;">Login</a>
-                <?php endif; ?>
-			</nav>
-		</aside>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CoreShare Tech — Home</title>
+  <link rel="icon" type="image/png" href="../images/Gemini_Generated_Image_69zr6i69zr6i69zr.png" sizes="32x32">
+  <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="../css/home.css?v=<?php echo time(); ?>">
+  <script>const USER_IS_LOGGED_IN = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;</script>
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <aside class="sidebar" id="sidebar" style="display:flex; flex-direction:column;">
+    <div class="brand">
+      <span>CoreShare <strong>Tech</strong></span>
+      <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
+    </div>
+    <nav class="nav" style="margin-top:10px; display:flex; flex-direction:column; gap:10px; flex-grow:1;">
+      <a href="./index.php" class="nav-link active">Home</a>
+      <a href="./dashboard.php" class="nav-link">Dashboard</a>
+      <a href="./search.php" class="nav-link">Search</a>
+      <a href="./resource.php" class="nav-link">Resource</a>
+      <a href="./contributions.php" class="nav-link">Contributions</a>
+      <a href="./contact.php" class="nav-link">Contact</a>
+      <a href="./sources.php" class="nav-link">Other Resources</a>
+      <?php if($isLoggedIn && $userRole === 'admin'): ?>
+          <a href="./moderation.php" class="nav-link">Moderation</a>
+      <?php endif; ?>
+      <?php if($isLoggedIn): ?>
+          <a href="../php/logout.php" class="nav-link" style="color:#EF4444; font-weight:700;">Logout</a>
+      <?php else: ?>
+          <a href="./login.php" class="nav-link" style="color:var(--primary-blue); font-weight:700;">Login</a>
+      <?php endif; ?>
 
-		<main class="main-content">
-			<button id="menu-toggle" class="mobile-menu-btn">☰</button>
-			<header class="dashboard-header">
-                <div class="header-title">
-                    <h1><?php echo $isLoggedIn ? ucfirst($userRole) . ' Dashboard' : 'Guest Dashboard'; ?></h1>
-                    <p style="color:var(--text-gray); font-size:0.9rem;">Welcome, <?php echo htmlspecialchars($userName); ?></p>
-                </div>
-                <div class="search-bar"><form action="search.php" method="GET" style="width:100%; display:flex;"><input type="text" name="q" placeholder="Search notes, papers, or study guides..." style="flex:1;"><button type="submit" style="background:none; border:none; cursor:pointer;"><span><img src="../images/Search_Magnifying_Glass.svg" alt="Search"></span></button></form></div>
-            </header>
+      <?php if ($userPlan === 'free'): ?>
+      <div style="margin-top:auto; padding-top:20px;">
+          <div style="background:var(--bg-surface); border:1px solid var(--border-subtle); padding:15px; border-radius:8px; text-align:center;">
+              <span style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:5px; text-transform:uppercase;">Sponsored</span>
+              <strong style="font-size:0.85rem; color:var(--text-main); display:block;">Grammarly Premium</strong>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin:5px 0;">Write better essays.</p>
+              <a href="#" style="font-size:0.8rem; color:var(--primary-blue); font-weight:700; text-decoration:none;">Learn More</a>
+          </div>
+      </div>
+      <?php endif; ?>
+    </nav>
+  </aside>
 
-            <section class="stats-row">
-				<div class="stat-card"><div><div class="stat-value" id="stat-downloads"><?php echo $totalDownloads; ?></div><div class="stat-label">Total Downloads</div></div><div style="background:#DBEAFE; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--primary-blue);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></div></div>
-				<div class="stat-card"><div><div class="stat-value" id="stat-resources"><?php echo $totalResources; ?></div><div class="stat-label">My Resources</div></div><div style="background:#D1FAE5; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--success);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></div></div>
-				<div class="stat-card"><div><div class="stat-value" id="stat-rating"><?php echo $avgRating; ?></div><div class="stat-label">Rating Received</div></div><div style="background:#FEF3C7; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#F59E0B;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div></div>
-			</section>
+  <button id="menu-toggle" class="mobile-menu-btn"><span id="toggle-icon">☰</span></button>
 
-			<section>
-				<div class="section-header"><h3>Trending Study Materials</h3><a href="./resource.php" style="color:var(--primary-blue); text-decoration:none;">View All</a></div>
-				<div class="grid-container">
-					<?php
-					$sql = "SELECT * FROM resources WHERE status='published' ORDER BY downloads DESC LIMIT 4";
-					$result = $conn->query($sql);
-					if ($result->num_rows > 0) {
-						while($row = $result->fetch_assoc()) {
-							$title = htmlspecialchars($row['title']);
-							$subject = htmlspecialchars($row['subject']);
-                            $type = htmlspecialchars($row['type']);
-                            $fileExt = strtolower(pathinfo($row['file_path'], PATHINFO_EXTENSION));
-                            $icon = "📄"; $bgColor = "#F1F5F9"; $textColor = "#64748B";
-                            if ($fileExt == 'pdf') { $icon = "📕"; $bgColor = "#FEE2E2"; $textColor = "#EF4444"; } 
-                            elseif ($fileExt == 'docx' || $fileExt == 'doc') { $icon = "📘"; $bgColor = "#DBEAFE"; $textColor = "#3B82F6"; }
-                            
-                            echo '<div class="card"><div class="card-image" style="background:'.$bgColor.';display:flex;align-items:center;justify-content:center;flex-direction:column;"><div style="font-size:4rem;">'.$icon.'</div><div style="font-weight:700;color:'.$textColor.';margin-top:10px;">'.$fileExt.'</div></div><div class="card-body"><span class="tag">'.$subject.'</span><div class="card-title">'.$title.'</div><div class="card-meta"><span>'.$type.'</span></div><button class="btn-card" onclick="openResourceModal('.$row['id'].')">View Resource</button></div></div>';
-						}
-					} else { echo '<p style="color:var(--text-muted);">No resources found. Be the first to upload!</p>'; }
-					?>
-				</div>
-			</section>
-		</main>
-                
-<div class="new-modal-overlay" id="resource-modal">
-        <div class="new-modal-window">
-            <div class="new-modal-header">
-                <div class="header-left">
-                    <span class="resource-type-badge">Type</span>
-                    <h2 class="resource-title">Resource Title</h2>
-                    <div class="resource-meta">
-                        <span class="course-info">Course Name</span>
-                        <span style="color:#CBD5E1">•</span>
-                        <span class="star-display">★★★★★</span>
-                    </div>
-                </div>
-                <button class="new-close-btn" onclick="closeResourceModal()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            
-            <div class="new-modal-body">
-                <div class="modal-col-left">
-                    <div class="file-preview-card">
-                        <div class="big-file-icon">📄</div>
-                        <div class="file-name-display">filename.pdf</div>
-                    </div>
-                    <button class="btn-primary-download">Download Material</button>
-                </div>
-                
-                <div class="modal-col-right">
-                    <div class="reviews-scroll-area">
-                        <div class="reviews-list">
-                            </div>
-                    </div>
-                    
-                    <div class="review-input-area">
-                        <div class="star-select-row">
-                            <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
-                        </div>
-                        <div class="input-row">
-                            <input type="text" class="modern-input" placeholder="Share your thoughts on this resource...">
-                            <button class="btn-send">➤</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>    
-    <script src="../js/script.js?v=<?php echo time(); ?>"></script>
+  <main class="main-content">
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Share and discover technical resources quickly</h1>
+        <p class="hero-desc">CoreShare Tech is a lightweight resource hub for developers and contributors — upload, search, and collaborate on learning materials, tools, and project assets.</p>
+        <div class="cta-buttons">
+          <?php if(!$isLoggedIn): ?>
+            <a class="btn btn-primary" href="./login.php">Get Started</a>
+          <?php else: ?>
+            <a class="btn btn-primary" href="./dashboard.php">Go to Dashboard</a>
+          <?php endif; ?>
+          <a class="btn btn-ghost" href="./resource.php">Browse Resources</a>
+        </div>
+      </div>
+      <aside class="card hero-stats">
+        <h3 class="stats-title">Quick Stats</h3>
+        <p class="stats-desc">Community contributions, downloads, and recent uploads at a glance.</p>
+        <ul class="stats-list">
+          <li><strong><?php echo number_format($totalResources); ?></strong> resources</li>
+          <li><strong><?php echo number_format($totalDownloads); ?></strong> downloads</li>
+          <li><strong><?php echo number_format($totalContributors); ?></strong> contributors</li>
+        </ul>
+      </aside>
+    </section>
+
+    <section class="features-section">
+      <h2 class="section-title">Everything you need</h2>
+      <div class="features">
+        <div class="feature card"><div class="feature-icon">📁</div><strong class="feature-title">Upload & Manage</strong><div class="desc feature-desc">Add resources, attach files, and edit metadata in seconds.</div></div>
+        <div class="feature card"><div class="feature-icon">🔍</div><strong class="feature-title">Search & Discover</strong><div class="desc feature-desc">Fast filtering and full-text search to find what you need.</div></div>
+        <div class="feature card"><div class="feature-icon">🔒</div><strong class="feature-title">Secure Access</strong><div class="desc feature-desc">User roles and simple permissions keep your resources protected.</div></div>
+      </div>
+    </section>
+    
+    <section class="pricing-section">
+      <div class="pricing-header"><h2 class="section-title">Pricing & Plans</h2><p class="pricing-intro">Select the access tier that fits your academic needs.</p></div>
+      
+      <div class="pricing-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:20px;">
+        
+        <div class="card pricing-card">
+          <div class="card-body">
+            <strong class="card-plan-title">Free</strong>
+            <div class="card-plan-price">GH₵0 <span class="card-price-unit">/mo</span></div>
+            <ul class="card-features">
+              <li>Up to 5 Resource Uploads</li>
+              <li>5 Daily Downloads Limit</li>
+              <li>Standard Search</li>
+              <li>Ad-Supported Experience</li>
+            </ul>
+            <div class="card-action"><a class="btn btn-ghost w-100" style="text-align:center; display:block;" href="./billing.php?plan=free">Current Plan</a></div>
+          </div>
+        </div>
+
+        <div class="card pricing-card" style="border-top: 4px solid #D97706;">
+          <div class="card-body">
+            <strong class="card-plan-title">Exam Pass</strong>
+            <div class="card-plan-price">GH₵15 <span class="card-price-unit">/wk</span></div>
+            <ul class="card-features">
+              <li>7 Days Unlimited Access</li>
+              <li>Unlimited Downloads</li>
+              <li>Ad-Free Experience</li>
+              <li>Perfect for Finals Week</li>
+            </ul>
+            <div class="card-action"><a class="btn btn-ghost w-100" style="text-align:center; display:block; border-color:#D97706; color:#D97706;" href="./billing.php?plan=exam_pass">Get Pass</a></div>
+          </div>
+        </div>
+
+        <div class="card pricing-card">
+          <div class="card-body">
+            <strong class="card-plan-title">Pro Monthly</strong>
+            <div class="card-plan-price">GH₵30 <span class="card-price-unit">/mo</span></div>
+            <ul class="card-features">
+              <li>Unlimited Uploads & Downloads</li>
+              <li>Create Custom Collections</li>
+              <li>Advanced Deep Search</li>
+              <li>Priority Support</li>
+            </ul>
+            <div class="card-action"><a class="btn btn-ghost w-100" style="text-align:center; display:block;" href="./billing.php?plan=pro">Upgrade Monthly</a></div>
+          </div>
+        </div>
+
+        <div class="card pricing-card pro-card">
+          <div class="card-body">
+            <div class="pro-badge">Best Value</div>
+            <strong class="card-plan-title">Semester Plan</strong>
+            <div class="card-plan-price">GH₵90 <span class="card-price-unit">/term</span></div>
+            <ul class="card-features" style="margin-bottom: 12px;">
+              <li><strong>All Pro Features Included</strong></li>
+              <li>Full 4-Month Coverage</li>
+              <li>Saves GH₵30 total</li>
+              <li>Priority Feature Requests</li>
+            </ul>
+            <div class="card-action"><a class="btn btn-primary w-100" style="text-align:center; display:block;" href="./billing.php?plan=semester">Get Semester Plan</a></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+  <footer>© <span id="year"></span> CoreShare Tech — Built for sharing knowledge. • <a href="./contact.php">Contact</a></footer>
+  <script src="../js/script.js?v=<?php echo time(); ?>"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>

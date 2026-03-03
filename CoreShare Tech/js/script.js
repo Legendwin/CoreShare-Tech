@@ -46,16 +46,16 @@ function showToast(message, type = 'info') {
     }
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    let icon = '\u2139\ufe0f';
-    if (type === 'success') icon = '\u2705';
-    if (type === 'error') icon = '\u274c';
-    if (type === 'warning') icon = '\u26a0\ufe0f';
+    let icon = 'ℹ️';
+    if (type === 'success') icon = '✅';
+    if (type === 'error') icon = '❌';
+    if (type === 'warning') icon = '⚠️';
     toast.innerHTML = `
         <div style="display:flex; align-items:center; gap:10px;">
             <span style="font-size:1.2rem;">${icon}</span>
             <span class="toast-message">${escapeHtml(message)}</span>
         </div>
-        <button class="toast-close" onclick="this.parentElement.remove()">\u00d7</button>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
     `;
     container.appendChild(toast);
     setTimeout(() => {
@@ -189,35 +189,43 @@ document.addEventListener('click', function(e) {
 // ---------------------------------------------------------
 document.addEventListener('DOMContentLoaded', function() {
     const themeBtn = document.getElementById('theme-toggle');
+    const yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
     if(themeBtn) themeBtn.addEventListener('click', toggleTheme);
 
     // Sidebar & Backdrop Logic
     const toggle = document.getElementById('menu-toggle');
+    const toggleIcon = document.getElementById('toggle-icon');
     const side = document.getElementById('sidebar');
-    const close = document.querySelector('.sidebar-close-btn');
     
-    // Create Backdrop if missing
-    let overlay = document.querySelector('.sidebar-overlay');
-    if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.className = 'sidebar-overlay';
-        document.body.appendChild(overlay);
+    if (toggle && side) {
+        let overlay = document.querySelector('.sidebar-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'sidebar-overlay';
+            document.body.appendChild(overlay);
+        }
+        toggle.onclick = function () {
+            side.classList.toggle('open');
+            overlay.classList.toggle('active');
+            const isOpen = side.classList.contains('open');
+            document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+            if (toggleIcon) toggleIcon.innerHTML = isOpen ? '✕' : '☰';
+        };
+        const navLinks = document.querySelectorAll('.sidebar .nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                side.classList.remove('open'); overlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+                if (toggleIcon) toggleIcon.innerHTML = '☰';
+            });
+        });
+        overlay.addEventListener('click', () => {
+            side.classList.remove('open'); overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            if (toggleIcon) toggleIcon.innerHTML = '☰';
+        });
     }
-
-    function openSidebar() {
-        side.classList.add('open');
-        overlay.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevent bg scrolling
-    }
-    function closeSidebar() {
-        side.classList.remove('open');
-        overlay.classList.remove('active');
-        document.body.style.overflow = ''; 
-    }
-
-    if(toggle) toggle.onclick = openSidebar;
-    if(close) close.onclick = closeSidebar;
-    overlay.onclick = closeSidebar;
 
     // Toast URL Messages
     const p = new URLSearchParams(window.location.search);
@@ -290,29 +298,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if(catBox) catBox.style.display='none'; if(placeholder) placeholder.style.display='flex';
         });
     }
-
-    // Edit Form Logic
-    const editForm = document.getElementById('edit-resource-form');
-    if (editForm) {
-        editForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            fetch('../php/edit_resource.php', { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Resource updated successfully', 'success');
-                    document.getElementById('edit-modal').classList.remove('open');
-                    setTimeout(() => location.reload(), 1000);
-                } else { showToast(data.message || 'Update failed', 'error'); }
-            })
-            .catch(error => { console.error('Error:', error); showToast('An error occurred', 'error'); });
-        });
-    }
 });
 
 // ---------------------------------------------------------
-// 6. Modal Functions (Window Scope)
+// 6. Modal Functions & Download Intercept
 // ---------------------------------------------------------
 window.openUploadModal = function() {
     if (typeof USER_IS_LOGGED_IN !== 'undefined' && !USER_IS_LOGGED_IN) { window.location.href='login.php'; return; }
@@ -320,6 +309,9 @@ window.openUploadModal = function() {
     if(m) m.classList.add('open');
 };
 window.closeUploadModal = function() { document.getElementById('upload-modal').classList.remove('open'); };
+
+let downloadCountdownTimer;
+
 window.openResourceModal = function(identifier) {
     const m = document.getElementById('resource-modal');
     if(!m) return;
@@ -342,12 +334,55 @@ window.openResourceModal = function(identifier) {
             const ext = (rsrc.file_path || '').split('.').pop().toLowerCase();
             m.querySelector('.file-name-display').innerText = `${rsrc.title}.${ext}`;
             const dlBtn = m.querySelector('.btn-primary-download');
+            
+            // Handle Download Logic (Including Interstitial for Free Users)
             if(dlBtn) {
                 dlBtn.onclick = () => {
-                    if(d.current_user_id == 0) window.location.href='login.php';
-                    else { window.location.href=`../php/download.php?file=${encodeURIComponent(rsrc.file_path)}`; updateDashboardStats(); }
+                    if(d.current_user_id == 0) {
+                        window.location.href='login.php';
+                    } else if (typeof USER_PLAN !== 'undefined' && USER_PLAN === 'free') {
+                        // Show Ad Interstitial
+                        const interstitial = document.getElementById('download-interstitial');
+                        if (interstitial) {
+                            interstitial.style.display = 'flex';
+                            setTimeout(() => interstitial.classList.add('open'), 10);
+                            
+                            let count = 5;
+                            const countEl = document.getElementById('dl-countdown');
+                            const skipBtn = document.getElementById('dl-skip-btn');
+                            countEl.innerText = `Your download will begin in ${count} seconds...`;
+                            skipBtn.style.display = 'none';
+                            
+                            clearInterval(downloadCountdownTimer);
+                            downloadCountdownTimer = setInterval(() => {
+                                count--;
+                                if (count > 0) {
+                                    countEl.innerText = `Your download will begin in ${count} seconds...`;
+                                } else {
+                                    clearInterval(downloadCountdownTimer);
+                                    countEl.innerText = `Your download is ready.`;
+                                    skipBtn.style.display = 'inline-block';
+                                    skipBtn.onclick = () => {
+                                        interstitial.classList.remove('open');
+                                        setTimeout(() => interstitial.style.display = 'none', 300);
+                                        window.location.href = `../php/download.php?file=${encodeURIComponent(rsrc.file_path)}`;
+                                        updateDashboardStats();
+                                    };
+                                }
+                            }, 1000);
+                        } else {
+                            // Fallback if interstitial HTML is missing
+                            window.location.href = `../php/download.php?file=${encodeURIComponent(rsrc.file_path)}`;
+                            updateDashboardStats();
+                        }
+                    } else {
+                        // Pro Users - Instant Download
+                        window.location.href=`../php/download.php?file=${encodeURIComponent(rsrc.file_path)}`; 
+                        updateDashboardStats();
+                    }
                 };
             }
+
             const reviewsList = m.querySelector('.reviews-list');
             reviewsList.innerHTML = '';
             if(d.reviews.length === 0) { reviewsList.innerHTML = '<div style="text-align:center; padding:20px; color:#cbd5e1;">No reviews yet.</div>'; } 
@@ -355,15 +390,7 @@ window.openResourceModal = function(identifier) {
                 d.reviews.forEach(rv => {
                     const div = document.createElement('div');
                     div.className = 'modern-review-item';
-                    div.innerHTML = `
-                        <div class="modern-avatar">${escapeHtml((rv.full_name || 'U')[0])}</div>
-                        <div class="modern-review-content">
-                            <div class="m-review-header">
-                                <span class="m-user-name">${escapeHtml(rv.full_name)}</span>
-                                <span class="m-stars">${'\u2605'.repeat(rv.rating)}</span>
-                            </div>
-                            <div class="m-comment">${escapeHtml(rv.comment)}</div>
-                        </div>`;
+                    div.innerHTML = `<div class="modern-avatar">${escapeHtml((rv.full_name || 'U')[0])}</div><div class="modern-review-content"><div class="m-review-header"><span class="m-user-name">${escapeHtml(rv.full_name)}</span><span class="m-stars">${'\u2605'.repeat(rv.rating)}</span></div><div class="m-comment">${escapeHtml(rv.comment)}</div></div>`;
                     reviewsList.appendChild(div);
                 });
             }
@@ -371,26 +398,9 @@ window.openResourceModal = function(identifier) {
     })
     .catch(err => { console.error(err); showToast('Connection error', 'error'); });
 };
+
 window.closeResourceModal = function() { const el = document.getElementById('resource-modal'); if (el) el.classList.remove('open'); };
-window.openEditModal = function(id) {
-    const m = document.getElementById('edit-modal');
-    if (!m) return;
-    fetch(`../php/get_resource_details.php?id=${id}`, { credentials: 'same-origin' })
-    .then(r => r.json())
-    .then(d => {
-        if (d.success && d.resource) {
-            const r = d.resource;
-            document.getElementById('edit-resource-id').value = r.id;
-            document.getElementById('edit-title').value = r.title;
-            document.getElementById('edit-course').value = r.course_name;
-            document.getElementById('edit-type').value = r.type;
-            document.getElementById('edit-grade').value = r.grade_level;
-            document.getElementById('edit-subject').value = r.subject;
-            m.classList.add('open');
-        } else { showToast("Could not load resource details", "error"); }
-    })
-    .catch(e => { console.error(e); showToast("Network error", "error"); });
-};
+
 window.deleteResource = function(id, btnElement) {
     window.openCustomConfirm("Permanently delete this file?", () => {
         const meta = document.querySelector('meta[name="csrf-token"]');
@@ -398,13 +408,52 @@ window.deleteResource = function(id, btnElement) {
         fetch('../php/delete-resource.php', { 
             method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
             body: JSON.stringify({ id: id, csrf_token: token }) 
-        })
-        .then(r => r.json())
-        .then(d => {
+        }).then(r => r.json()).then(d => {
             if (d && d.success) { if(btnElement) btnElement.closest('tr').remove(); showToast('Resource deleted', 'success'); updateDashboardStats(); }
             else { showToast(d.message || 'Error', 'error'); }
-        })
-        .catch(err => { console.error(err); showToast('Network Error', 'error'); });
+        }).catch(err => { showToast('Network Error', 'error'); });
     });
 };
-window.togglePassword = (id, ic) => { const i = document.getElementById(id); if (!i) return; i.type = i.type === 'password' ? 'text' : 'password'; if (ic && ic.style) ic.style.color = i.type === 'password' ? '#64748B' : '#3B82F6'; };
+
+// ---------------------------------------------------------
+// 7. Ad Overlay Logic (Popups & Exit Intent)
+// ---------------------------------------------------------
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Timed Popup Ad Logic
+    const promoModal = document.getElementById('promo-modal');
+    if (promoModal) {
+        setTimeout(function() {
+            if (!sessionStorage.getItem('adShown')) {
+                promoModal.style.display = 'flex';
+                setTimeout(() => promoModal.classList.add('open'), 10); 
+                sessionStorage.setItem('adShown', 'true');
+            }
+        }, 3000);
+    }
+});
+
+// 2. Exit Intent Ad Logic
+document.addEventListener('mouseleave', function(e) {
+    if (e.clientY < 10) { // Mouse moved up towards browser tabs/address bar
+        if (typeof USER_PLAN !== 'undefined' && USER_PLAN === 'free') {
+            if (!sessionStorage.getItem('exitIntentShown')) {
+                const exitModal = document.getElementById('exit-intent-modal');
+                if (exitModal) {
+                    exitModal.style.display = 'flex';
+                    setTimeout(() => exitModal.classList.add('open'), 10);
+                    sessionStorage.setItem('exitIntentShown', 'true');
+                }
+            }
+        }
+    }
+});
+
+window.closeAdModal = function() {
+    const promoModal = document.getElementById('promo-modal');
+    if (promoModal) { promoModal.classList.remove('open'); setTimeout(() => promoModal.style.display = 'none', 300); }
+};
+
+window.closeExitModal = function() {
+    const exitModal = document.getElementById('exit-intent-modal');
+    if (exitModal) { exitModal.classList.remove('open'); setTimeout(() => exitModal.style.display = 'none', 300); }
+};

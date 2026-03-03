@@ -7,6 +7,6 @@ $_SESSION = array();
 session_destroy();
 
 // Redirect to Guest Dashboard
-header("Location: ../html/index.php?success=logged_out");
+header("Location: ../html/dashboard.php?success=logged_out");
 exit;
 ?>

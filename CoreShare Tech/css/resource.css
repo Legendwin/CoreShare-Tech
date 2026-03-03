@@ -1,3 +1,71 @@
+/* --- RESOURCE PAGE SPECIFIC LAYOUT --- */
+.resource-page-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.resource-main-col {
+    flex: 1;
+    width: 100%;
+    min-width: 0; /* Prevents CSS Grid from overflowing flex container */
+}
+
+.resource-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+/* Header Search / Actions styling */
+.search-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.resource-search {
+    width: 100%;
+    max-width: 400px;
+}
+
+.resource-search form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.resource-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.resource-search button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-add-resource {
+    width: auto;
+    padding: 12px 20px;
+    white-space: nowrap;
+    background-color: var(--success);
+    color: white;
+    box-shadow: var(--shadow-sm);
+    font-weight: 700;
+}
+
+.btn-add-resource:hover {
+    background-color: #059669; /* Darker green on hover */
+    transform: translateY(-2px);
+}
+
+
 /* --- UPLOAD MODAL STYLES --- */
 #file-input {
     position: absolute;
@@ -186,6 +254,7 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+
 /* --- CONTRIBUTIONS PAGE ACTION BUTTONS --- */
 .action-cell {
     display: flex;
@@ -232,8 +301,40 @@
     filter: brightness(1.05);
 }
 
-/* Mobile Adjustments */
+
+/* --- RESPONSIVE DESIGN --- */
+
+/* Tablet & Smaller Screens */
+@media (max-width: 900px) {
+    /* Layout shifts to put sidebar (Ads/Pro info) on the bottom */
+    .resource-page-layout {
+        flex-direction: column-reverse;
+    }
+    
+    .resource-sidebar {
+        width: 100%;
+    }
+}
+
 @media (max-width: 768px) {
+    
+    /* Search Actions stack on mobile */
+    .search-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        margin-top: 15px;
+    }
+    
+    .resource-search {
+        max-width: 100%; /* Take full width on small screens */
+    }
+    
+    .btn-add-resource {
+        width: 100%;
+        text-align: center;
+    }
+    
     /* Allow the modal window to scroll internally on mobile */
     .new-modal-window { 
         height: auto; 
@@ -245,7 +346,7 @@
         border-radius: 16px;
     }
 
-    /* Stack columns */
+    /* Stack modal columns */
     .new-modal-body { 
         display: block;
         overflow: visible;
@@ -350,6 +451,7 @@
     }
 }
 
+/* Small Mobile Adjustments */
 @media (max-width: 480px) {
     .new-modal-window {
         border-radius: 12px;

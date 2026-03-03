@@ -1,0 +1,44 @@
+.resource-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.resource-item {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 15px;
+    width: 320px;
+    box-sizing: border-box;
+}
+
+.resource-item a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-size: 18px;
+}
+
+.resource-item a svg {
+    height: 18px;
+    width: 18px;
+    fill: var(--text-main);
+}
+
+.resource-item p {
+    color: var(--text-muted);
+}
+
+.resource-item a:hover {
+    text-decoration: underline;
+}
+
+.resource-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}

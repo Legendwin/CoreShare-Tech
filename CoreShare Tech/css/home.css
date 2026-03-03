@@ -1,0 +1,108 @@
+/* ==========================================================================
+   Home Page Specific Styles (style.css)
+   ========================================================================== */
+
+/* Hero Section */
+.hero {
+  max-width: 1100px;
+  margin: 0 auto 64px auto;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 40px;
+  align-items: center;
+}
+.hero-content {
+  max-width: 600px;
+}
+.hero-title { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.2; margin: 0 0 16px; color: var(--text-main); font-weight: 800; }
+.hero-desc { font-size: clamp(1rem, 2vw, 1.15rem); color: var(--text-muted); line-height: 1.6; margin: 0 0 28px; }
+.cta-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-primary { background: var(--grad-primary); color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); border: none;}
+.btn-ghost { border: 1px solid var(--border-subtle); color: var(--primary-blue); background: transparent; }
+
+.btn:hover { transform: translateY(-2px); }
+.btn-primary:hover { box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4); opacity: 0.95; }
+.btn-ghost:hover { background: var(--bg-surface-hover); color: var(--primary-dark); border-color: var(--primary-blue); }
+.w-100 { width: 100%; margin: 0; } /* Utility for full width button */
+
+/* Section Titles */
+.section-title { font-size: clamp(1.5rem, 4vw, 2rem); color: var(--text-main); font-weight: 700; margin-bottom: 8px; text-align: center; }
+
+/* Features Section */
+.features-section { max-width: 1100px; margin: 0 auto 64px auto; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 32px; }
+.feature.card { text-align: center; padding: 32px 24px; transition: transform 0.3s ease; border: 1px solid var(--border-subtle); }
+.feature.card:hover { transform: translateY(-8px); border-color: var(--primary-light); }
+.feature-icon { font-size: 2.5rem; margin-bottom: 16px; display: inline-block; }
+.feature-title { font-size: 1.2rem; color: var(--text-main); display: block; margin-bottom: 8px; }
+.feature-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+
+/* Pricing Section */
+.pricing-section { max-width: 800px; margin: 0 auto 64px auto; }
+.pricing-header { text-align: center; margin-bottom: 40px; }
+.pricing-intro { color: var(--text-muted); font-size: 1.1rem; }
+.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.pricing-card { display: flex; flex-direction: column; position: relative; border: 1px solid var(--border-subtle); }
+.pro-card { border: 2px solid var(--primary-blue); box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1); transform: scale(1.02); }
+.pro-badge { position: absolute; top: -6px; right: 24px; background: var(--primary-blue); color: white; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+
+.card-plan-title { font-size: 1.25rem; color: var(--text-main); display: block; }
+.card-plan-price { font-size: 2.5rem; font-weight: 800; color: var(--text-main); margin: 12px 0; }
+.card-price-unit { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
+.card-features { list-style: none; margin: 24px 0; padding: 0; color: var(--text-muted); }
+.card-features li { margin-bottom: 12px; padding-left: 24px; position: relative; }
+.card-features li::before { content: "✓"; position: absolute; left: 0; color: var(--success); font-weight: bold; }
+.card-action { margin-top: auto; }
+
+/* Stats Card */
+.hero-stats { padding: 32px; border: 1px solid var(--border-subtle); }
+.stats-title { font-size: 1.25rem; margin-bottom: 8px; color: var(--text-main); }
+.stats-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; }
+.stats-list { list-style: none; padding: 0; margin: 0; }
+.stats-list li { margin-bottom: 12px; font-size: 1rem; color: var(--text-main); display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px;}
+.stats-list li:last-child { border-bottom: none; }
+.stats-list strong { color: var(--primary-blue); font-size: 1.1rem; }
+
+/* Footer */
+footer { padding: 32px 20px; text-align: center; color: var(--text-muted); font-size: 0.95rem; border-top: 1px solid var(--border-subtle); margin-top: auto; }
+footer a { color: var(--primary-blue); text-decoration: none; font-weight: 600; }
+footer a:hover { text-decoration: underline; }
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Tablet (768px - 1023px) */
+@media (max-width: 1023px) {
+  .hero { grid-template-columns: 1fr; gap: 32px; text-align: center; }
+  .hero-content { max-width: 100%; margin: 0 auto; }
+  .cta-buttons { justify-content: center; }
+  .hero-stats { max-width: 500px; margin: 0 auto; width: 100%; }
+  .pro-card { transform: none; }
+}
+
+/* Mobile (576px - 767px) */
+@media (max-width: 767px) {
+  .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+  .features { gap: 16px; }
+  .feature.card { padding: 24px 16px; }
+}
+
+/* Small Mobile (< 576px) */
+@media (max-width: 575px) {
+  .hero { margin-bottom: 40px; gap: 24px; }
+  .features-section, .pricing-section { margin-bottom: 40px; }
+  .btn { width: 100%; text-align: center; }
+  .cta-buttons { flex-direction: column; gap: 12px; width: 100%; }
+}

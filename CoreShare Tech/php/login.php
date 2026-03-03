@@ -9,11 +9,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    $email = $_POST['email'];
-    // ... [Rest of logic remains the same] ...
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT id, full_name, password_hash, role FROM users WHERE email = ?");
+    // Fetch plan along with standard credentials
+    $stmt = $conn->prepare("SELECT id, full_name, password_hash, role, plan FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -26,12 +26,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['user_name'] = $row['full_name'];
             $_SESSION['user_role'] = $row['role'];
+            $_SESSION['plan'] = $row['plan'] ? $row['plan'] : 'free';
             $_SESSION['LAST_ACTIVITY'] = time();
             
             if ($row['role'] == 'admin') {
                 header("Location: ../html/moderation.php");
             } else {
-                header("Location: ../html/index.php");
+                header("Location: ../html/dashboard.php");
             }
             exit;
         } else {

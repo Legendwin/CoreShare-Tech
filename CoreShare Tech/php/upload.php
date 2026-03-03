@@ -11,6 +11,24 @@ if (!isset($_SESSION['user_id'])) {
     redirectWithError("Please login to upload files.");
 }
 
+$userPlan = $_SESSION['plan'] ?? 'free';
+$uploader_id = intval($_SESSION['user_id']);
+
+// Enforce plan upload limits
+if ($userPlan === 'free') {
+    $countRes = $conn->prepare("SELECT uploads_count FROM user_counters WHERE user_id = ? LIMIT 1");
+    $countRes->bind_param('i', $uploader_id);
+    $countRes->execute();
+    $countRes->bind_result($uploadedCount);
+    $countRes->fetch();
+    $countRes->close();
+
+    $freeUploadLimit = 5; 
+    if ($uploadedCount >= $freeUploadLimit) {
+        redirectWithError("Free accounts can upload up to $freeUploadLimit resources. Please upgrade to Pro to upload more.");
+    }
+}
+
 // Check for PHP post_max_size overflow (File too big crash)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
     $maxPost = ini_get('post_max_size');
@@ -18,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST) && empty($_FILES) && $
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // SECURITY: Verify CSRF Token
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         redirectWithError("Security validation failed (CSRF). Please refresh and try again.");
     }
@@ -26,9 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = trim($_POST['title']);
     $course_name = trim($_POST['course_name']);
     $type = $_POST['type'];
-    $subject = $_POST['subject'];
+    $programme = $_POST['programme'];
     $grade = $_POST['grade'];
-    $uploader_id = $_SESSION['user_id'];
 
     $target_dir = "../uploads/";
     if (!file_exists($target_dir)) mkdir($target_dir, 0755, true);
@@ -68,18 +84,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $target_file = $target_dir . $new_file_name;
 
     if (move_uploaded_file($file_tmp, $target_file)) {
-        // FIX: Set status to 'pending' so it goes to Moderation Queue
-        $stmt = $conn->prepare("INSERT INTO resources (title, course_name, type, subject, grade_level, file_path, uploaded_by, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')");
-        $stmt->bind_param("ssssssi", $title, $course_name, $type, $subject, $grade, $target_file, $uploader_id);
+        $stmt = $conn->prepare("INSERT INTO resources (title, course_name, type, programme, grade_level, file_path, uploaded_by, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')");
+        $stmt->bind_param("ssssssi", $title, $course_name, $type, $programme, $grade, $target_file, $uploader_id);
 
         if ($stmt->execute()) {
             $stmt->close();
-            // Success message updated to reflect pending status
+            // Increment uploads_count efficiently
+            $uup = $conn->prepare("UPDATE user_counters SET uploads_count = uploads_count + 1 WHERE user_id = ?");
+            $uup->bind_param('i', $uploader_id);
+            $uup->execute();
+            $uup->close();
+            
             header("Location: ../html/resource.php?success=uploaded_pending");
             exit();
         } else {
             if(file_exists($target_file)) unlink($target_file);
-            $stmt->close();
             redirectWithError("Database Error: " . $conn->error);
         }
     } else {

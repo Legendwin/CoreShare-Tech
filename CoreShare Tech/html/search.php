@@ -2,221 +2,171 @@
 session_start();
 require '../php/db_connect.php';
 
-$isLoggedIn = isset($_SESSION['user_id']); 
+$isLoggedIn = isset($_SESSION['user_id']);
 
-$search = isset($_GET['q']) ? $_GET['q'] : '';
-$progFilter = isset($_GET['programme']) ? $_GET['programme'] : '';
-$levelFilter = isset($_GET['level']) ? $_GET['level'] : '';
-$ratingFilter = isset($_GET['rating']) ? intval($_GET['rating']) : 0;
+// Include the new subscription tracker (This line does all the hard work!)
+require_once '../php/check_plan.php';
 
-// Base query
-$sql = "SELECT r.*, AVG(rev.rating) as avg_rating 
-        FROM resources r 
-        LEFT JOIN reviews rev ON r.id = rev.resource_id 
-        WHERE r.status='published'";
-
-// Dynamically build Prepared Statement params
-$types = "";
-$params = [];
-
-if (!empty($search)) {
-    $sql .= " AND (r.title LIKE ? OR r.subject LIKE ?)";
-    $searchTerm = "%" . $search . "%";
-    $types .= "ss";
-    $params[] = $searchTerm;
-    $params[] = $searchTerm;
+$searchQuery = isset($_GET['q']) ? trim($_GET['q']) : '';
+$sql = "SELECT * FROM resources WHERE status='published'";
+if (!empty($searchQuery)) {
+    $cleanQuery = $conn->real_escape_string($searchQuery);
+    $sql .= " AND (title LIKE '%$cleanQuery%' OR course_name LIKE '%$cleanQuery%' OR programme LIKE '%$cleanQuery%' OR type LIKE '%$cleanQuery%')";
 }
-if (!empty($progFilter)) {
-    $sql .= " AND r.subject = ?";
-    $types .= "s";
-    $params[] = $progFilter;
-}
-if (!empty($levelFilter)) {
-    $sql .= " AND r.grade_level = ?";
-    $types .= "s";
-    $params[] = $levelFilter;
-}
-
-$sql .= " GROUP BY r.id";
-if ($ratingFilter > 0) {
-    // HAVING clause can't easily use params in some MySQL versions depending on config, 
-    // but integers are safe to inject directly.
-    $sql .= " HAVING avg_rating >= $ratingFilter";
-}
-$sql .= " ORDER BY r.created_at DESC";
-
-// Execute Prepared Statement
-$stmt = $conn->prepare($sql);
-if (!empty($types)) {
-    $stmt->bind_param($types, ...$params);
-}
-$stmt->execute();
-$result = $stmt->get_result();
+$sql .= " ORDER BY created_at DESC";
+$result = $conn->query($sql);
+$numResults = $result ? $result->num_rows : 0;
 ?>
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CoreShare Tech — Search</title>
-  <link rel="icon" type="image/png" href="../images/Gemini_Generated_Image_69zr6i69zr6i69zr.png" sizes="32x32">
-  <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
-  <link rel="stylesheet" href="../css/search.css?v=<?php echo time(); ?>">
-  <script>const USER_IS_LOGGED_IN = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;</script>
-</head>
-<body>
-    <aside class="sidebar" id="sidebar">
-        <div class="brand">
-                <span>CoreShare <strong>Tech</strong></span>
-                <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Theme">🌙</button>
-                <button class="sidebar-close-btn" onclick="document.getElementById('sidebar').classList.remove('open')">×</button>
-            </div>
-        <nav class="nav" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
-            <a href="index.php" class="nav-link">Dashboard</a>
-            <a href="search.php" class="nav-link active">Search</a>
-            <a href="resource.php" class="nav-link">Resource</a>
-            <a href="contributions.php" class="nav-link">Contributions</a>
-            <a href="contact.php" class="nav-link">Contact</a>
-            <?php if($isLoggedIn && isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin'): ?>
-                <a href="moderation.php" class="nav-link">Moderation</a>
-            <?php endif; ?>
-            <?php if($isLoggedIn): ?>
-                <a href="../php/logout.php" class="nav-link" style="color:#EF4444;">Logout</a>
-            <?php else: ?>
-                <a href="login.php" class="nav-link" style="color:var(--primary-blue); font-weight:700;">Login</a>
-            <?php endif; ?>
-        </nav>
-    </aside>
-
-    <main class="main-content search-page-layout">
-      <button id="menu-toggle" class="mobile-menu-btn">☰</button>
-      <aside class="search-filters-aside">
-        <h3>Filters</h3>
-        <form action="search.php" method="GET" id="filterForm">
-            <input type="hidden" name="q" value="<?php echo htmlspecialchars($search); ?>">
-            
-            <label>Programme / Course</label>
-            <select name="programme" onchange="this.form.submit()">
-                <option value="">All Programmes</option>
-                <optgroup label="Faculty of Computing & Info Systems (FoCIS)">
-                    <option value="BSc Computer Science" <?php if($progFilter == 'BSc Computer Science') echo 'selected'; ?>>BSc. Computer Science</option>
-                    <option value="BSc IT" <?php if($progFilter == 'BSc IT') echo 'selected'; ?>>BSc. Information Technology</option>
-                    <option value="BSc Software Engineering" <?php if($progFilter == 'BSc Software Engineering') echo 'selected'; ?>>BSc. Software Engineering</option>
-                    <option value="BSc Data Science" <?php if($progFilter == 'BSc Data Science') echo 'selected'; ?>>BSc. Data Science & Analytics</option>
-                    <option value="BSc Info Systems" <?php if($progFilter == 'BSc Info Systems') echo 'selected'; ?>>BSc. Information Systems</option>
-                    <option value="BSc Cyber Security" <?php if($progFilter == 'BSc Cyber Security') echo 'selected'; ?>>BSc. Cyber Security</option>
-                    <option value="BSc Network Systems" <?php if($progFilter == 'BSc Network Systems') echo 'selected'; ?>>BSc. Network & Systems Admin</option>
-                    <option value="Diploma IT" <?php if($progFilter == 'Diploma IT') echo 'selected'; ?>>Diploma in IT</option>
-                </optgroup>
-                <optgroup label="Faculty of Engineering (FoE)">
-                    <option value="BSc Telecom Engineering" <?php if($progFilter == 'BSc Telecom Engineering') echo 'selected'; ?>>BSc. Telecom Engineering</option>
-                    <option value="BSc Computer Engineering" <?php if($progFilter == 'BSc Computer Engineering') echo 'selected'; ?>>BSc. Computer Engineering</option>
-                    <option value="BSc Electrical Engineering" <?php if($progFilter == 'BSc Electrical Engineering') echo 'selected'; ?>>BSc. Electrical & Electronic Eng.</option>
-                    <option value="BSc Mathematics" <?php if($progFilter == 'BSc Mathematics') echo 'selected'; ?>>BSc. Mathematics</option>
-                    <option value="BSc Statistics" <?php if($progFilter == 'BSc Statistics') echo 'selected'; ?>>BSc. Computational Statistics</option>
-                </optgroup>
-                <optgroup label="GCTU Business School">
-                    <option value="BSc Business Admin" <?php if($progFilter == 'BSc Business Admin') echo 'selected'; ?>>BSc. Business Administration</option>
-                    <option value="BSc Accounting" <?php if($progFilter == 'BSc Accounting') echo 'selected'; ?>>BSc. Accounting</option>
-                    <option value="BSc Banking Finance" <?php if($progFilter == 'BSc Banking Finance') echo 'selected'; ?>>BSc. Banking & Finance</option>
-                    <option value="BSc Economics" <?php if($progFilter == 'BSc Economics') echo 'selected'; ?>>BSc. Economics</option>
-                    <option value="BSc Procurement" <?php if($progFilter == 'BSc Procurement') echo 'selected'; ?>>BSc. Procurement & Logistics</option>
-                    <option value="BSc Marketing" <?php if($progFilter == 'BSc Marketing') echo 'selected'; ?>>BSc. Marketing</option>
-                    <option value="Diploma Business" <?php if($progFilter == 'Diploma Business') echo 'selected'; ?>>Diploma in Business Admin</option>
-                </optgroup>
-            </select>
-
-            <label>Course Level</label>
-            <select name="level" onchange="this.form.submit()">
-              <option value="">All Levels</option>
-              <option value="Year 1" <?php if($levelFilter == 'Year 1') echo 'selected'; ?>>Year 1 (Freshman)</option>
-              <option value="Year 2" <?php if($levelFilter == 'Year 2') echo 'selected'; ?>>Year 2 (Sophomore)</option>
-              <option value="Year 3" <?php if($levelFilter == 'Year 3') echo 'selected'; ?>>Year 3 (Junior)</option>
-              <option value="Year 4" <?php if($levelFilter == 'Year 4') echo 'selected'; ?>>Year 4 (Senior)</option>
-              <option value="Grad" <?php if($levelFilter == 'Grad') echo 'selected'; ?>>Graduate / Masters</option>
-              <option value="PhD" <?php if($levelFilter == 'PhD') echo 'selected'; ?>>PhD</option>
-            </select>
-            
-            <label>Min. Rating</label>
-            <div class="rating-labels"><span>1★</span><span>5★</span></div>
-            <input type="range" name="rating" min="0" max="5" value="<?php echo $ratingFilter; ?>" onchange="this.form.submit()">
-            <div class="rating-value"><?php echo $ratingFilter > 0 ? $ratingFilter . "+ Stars" : "Any Rating"; ?></div>
-            <button type="submit">Apply Filters</button>
-        </form>
-      </aside>
-      
-      <div class="search-results-column">
-        <form action="search.php" method="GET">
-            <input type="hidden" name="programme" value="<?php echo htmlspecialchars($progFilter); ?>">
-            <input type="hidden" name="level" value="<?php echo htmlspecialchars($levelFilter); ?>">
-            <input type="hidden" name="rating" value="<?php echo $ratingFilter; ?>">
-            <div class="large-search-bar"><span><img src="../images/Search_Magnifying_Glass.svg" alt="Search"></span><input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search resources, courses..."></div>
-        </form>
-
-        <div class="grid-container">
-            <?php
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    $stars = $row['avg_rating'] ? number_format($row['avg_rating'], 1) : 'New';
-                    $fileExt = strtolower(pathinfo($row['file_path'], PATHINFO_EXTENSION));
-                    $icon = "📄"; $bgColor = "#F1F5F9"; $textColor = "#64748B";
-                    if ($fileExt == 'pdf') { $icon = "📕"; $bgColor = "#FEE2E2"; $textColor = "#EF4444"; } 
-                    elseif ($fileExt == 'docx' || $fileExt == 'doc') { $icon = "📘"; $bgColor = "#DBEAFE"; $textColor = "#3B82F6"; } 
-                    
-                    // FIXED: Now passing ID (int) instead of Title (string) to avoid quoting errors in JS
-                    echo '<div class="card"><div class="card-image" style="background:'.$bgColor.';display:flex;align-items:center;justify-content:center;flex-direction:column;"><div style="font-size:4rem;">'.$icon.'</div><div style="font-weight:700;color:'.$textColor.';margin-top:10px;">'.$fileExt.'</div></div><div class="card-body"><span class="tag">'.htmlspecialchars($row['subject']).'</span><div class="card-title">'.htmlspecialchars($row['title']).'</div><div class="card-meta"><span>'.htmlspecialchars($row['grade_level']).'</span><span style="color:#F59E0B;">★ '.$stars.'</span></div><button class="btn-card" onclick="openResourceModal('.$row['id'].')">View Details</button></div></div>';
-                }
-            } else { echo '<p style="color:var(--text-gray);">No results found matching your criteria.</p>'; }
-            ?>
-        </div>
-      </div>
-    </main>
-    
-<div class="new-modal-overlay" id="resource-modal">
-        <div class="new-modal-window">
-            <div class="new-modal-header">
-                <div class="header-left">
-                    <span class="resource-type-badge">Type</span>
-                    <h2 class="resource-title">Resource Title</h2>
-                    <div class="resource-meta">
-                        <span class="course-info">Course Name</span>
-                        <span style="color:#CBD5E1">•</span>
-                        <span class="star-display">★★★★★</span>
-                    </div>
-                </div>
-                <button class="new-close-btn" onclick="closeResourceModal()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            
-            <div class="new-modal-body">
-                <div class="modal-col-left">
-                    <div class="file-preview-card">
-                        <div class="big-file-icon">📄</div>
-                        <div class="file-name-display">filename.pdf</div>
-                    </div>
-                    <button class="btn-primary-download">Download Material</button>
-                </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Search - CoreShare Tech</title>
+        <link rel="icon" type="image/png" href="../images/Gemini_Generated_Image_69zr6i69zr6i69zr.png" sizes="32x32">
+        <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" href="../css/resource.css?v=<?php echo time(); ?>">
+        <script>const USER_IS_LOGGED_IN = <?php echo $isLoggedIn ? 'true' : 'false'; ?>; const USER_PLAN = '<?php echo $userPlan; ?>';</script>
+    </head>
+    <body>
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+        <aside class="sidebar" id="sidebar" style="display:flex; flex-direction:column;">
+            <div class="brand"><span>CoreShare <strong>Tech</strong></span><button id="theme-toggle" class="theme-toggle-btn">🌙</button></div>
+            <nav class="nav" style="margin-top:10px; display:flex; flex-direction:column; gap:10px; flex-grow:1;">
+                <a href="./index.php" class="nav-link">Home</a>
+                <a href="./dashboard.php" class="nav-link">Dashboard</a>
+                <a href="./search.php" class="nav-link active">Search</a>
+                <a href="./resource.php" class="nav-link">Resource</a>
+                <a href="./contributions.php" class="nav-link">Contributions</a>
+                <a href="./contact.php" class="nav-link">Contact</a>
+                <a href="./sources.php" class="nav-link">Other Resources</a>
                 
-                <div class="modal-col-right">
-                    <div class="reviews-scroll-area">
-                        <div class="reviews-list">
-                            </div>
+                <?php if($isLoggedIn): ?>
+                    <a href="../php/logout.php" class="nav-link" style="color:#EF4444; font-weight:700;">Logout</a>
+                <?php else: ?>
+                    <a href="./login.php" class="nav-link" style="color:var(--primary-blue); font-weight:700;">Login</a>
+                <?php endif; ?>
+
+                <?php if ($userPlan === 'free'): ?>
+                <div style="margin-top:auto; padding-top:20px;">
+                    <div style="background:var(--bg-surface); border:1px solid var(--border-subtle); padding:15px; border-radius:8px; text-align:center;">
+                        <span style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:5px; text-transform:uppercase;">Sponsored</span>
+                        <strong style="font-size:0.85rem; color:var(--text-main); display:block;">Grammarly Premium</strong>
+                        <a href="#" style="font-size:0.8rem; color:var(--primary-blue); font-weight:700; text-decoration:none;">Learn More</a>
                     </div>
-                    
-                    <div class="review-input-area">
-                        <div class="star-select-row">
-                            <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+                </div>
+                <?php endif; ?>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <button id="menu-toggle" class="mobile-menu-btn"><span id="toggle-icon">☰</span></button>
+            <header class="dashboard-header">
+                <div class="header-title"><h1>Search Results</h1><p style="color:var(--text-gray); font-size:0.9rem;">Found <?php echo $numResults; ?> results for "<?php echo htmlspecialchars($searchQuery); ?>"</p></div>
+                <div class="search-actions">
+                    <div class="search-bar resource-search"><form action="search.php" method="GET"><input type="text" name="q" placeholder="Filter by course code, topic..." value="<?php echo htmlspecialchars($searchQuery); ?>"><button type="submit"><span><img src="../images/Search_Magnifying_Glass.svg" alt="Search"></span></button></form></div>
+                </div>
+            </header>
+
+            <?php if ($userPlan === 'free'): ?>
+            <div style="width:100%; max-width:1100px; margin: 0 auto 24px auto; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:8px; padding:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div style="display:flex; align-items:center; gap:15px;"><span style="background:#FEE2E2; color:#EF4444; padding:4px 8px; border-radius:4px; font-size:0.75rem; font-weight:700;">AD</span><strong style="color:var(--text-main); font-size:0.95rem;">Master Your Classes with CourseHero</strong></div>
+                <a href="#" class="btn-card" style="padding:6px 12px; border:1px solid var(--primary-blue); color:var(--primary-blue); background:transparent; font-size:0.85rem;">View Solutions</a>
+            </div>
+            <?php endif; ?>
+
+            <div class="resource-page-layout">
+                <div class="resource-main-col">
+                    <div class="grid-container">
+                        <?php
+                        if ($numResults > 0) {
+                            $count = 0;
+                            while($row = $result->fetch_assoc()) {
+                                $count++;
+                                if ($userPlan === 'free' && $count == 3) {
+                                    echo '<div class="card" style="border: 1px solid var(--border-subtle); background: var(--bg-surface);"><div class="card-body" style="display:flex; flex-direction:column; height:100%;"><span class="tag" style="background: var(--border-subtle); color: var(--text-muted); align-self:flex-start;">Sponsored Ad</span><div class="card-title" style="margin-top: 10px;">Grammarly for Students</div><a href="#" class="btn-card" style="background: transparent; border: 1px solid var(--primary-blue); color: var(--primary-blue); display:block; text-align:center; margin-top:auto; text-decoration:none;">Learn More</a></div></div>';
+                                }
+                                $fileExt = strtolower(pathinfo($row['file_path'], PATHINFO_EXTENSION));
+                                $icon = "📄"; $bgColor = "#F1F5F9"; $textColor = "#64748B";
+                                if ($fileExt == 'pdf') { $icon = "📕"; $bgColor = "#FEE2E2"; $textColor = "#EF4444"; } 
+                                elseif ($fileExt == 'docx') { $icon = "📘"; $bgColor = "#DBEAFE"; $textColor = "#3B82F6"; }
+                                elseif ($fileExt == 'pptx' || $fileExt == 'ppt') { $icon = "📙"; $bgColor = "#FFEDD5"; $textColor = "#F97316"; }
+                                echo '<div class="card"><div class="card-image" style="background:'.$bgColor.';display:flex;align-items:center;justify-content:center;flex-direction:column;"><div style="font-size:4rem;">'.$icon.'</div><div style="font-weight:700;color:'.$textColor.';margin-top:10px;">'.$fileExt.'</div></div><div class="card-body"><span class="tag">'.htmlspecialchars($row['programme']).'</span><div class="card-title">'.htmlspecialchars($row['title']).'</div><div class="card-meta"><span>'.htmlspecialchars($row['type']).'</span></div><button class="btn-card" onclick="openResourceModal('.$row['id'].')">View Details</button></div></div>';
+                            }
+                        } else { 
+                            if ($userPlan === 'free') {
+                                echo '<div style="grid-column: 1 / -1; text-align:center; padding: 40px 20px; background:var(--bg-surface); border:1px dashed var(--border-subtle); border-radius:12px;"><div style="font-size:3rem; margin-bottom:15px;">📚</div><h3 style="color:var(--text-main); margin-bottom:10px;">Didn\'t find what you need?</h3><p style="color:var(--text-muted); margin-bottom:20px;">Check out our sponsor for thousands of verified textbook solutions.</p><a href="#" class="btn-card" style="background:var(--primary-blue); color:white; text-decoration:none;">Search Course Hero</a></div>';
+                            } else {
+                                echo "<p style='color:#64748B; padding:20px; grid-column:1/-1;'>No resources match your search.</p>"; 
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>
+
+                <aside class="resource-sidebar">
+                    <?php if ($userPlan === 'free') { ?>
+                        <div class="card" style="border:1px solid var(--border-subtle); position: sticky; top: 20px;">
+                            <strong style="color:var(--text-main);">Sponsored</strong>
+                            <div style="margin-top:10px;color:var(--text-muted); font-size:0.95rem;">Ad: Upgrade to Pro for unlimited downloads, direct edits, and no ads.</div>
+                            <div style="margin-top:16px;"><a href="./billing.php" class="btn-card" style="display:block; text-align:center; background:transparent; color:var(--primary-blue); border:1px solid var(--primary-blue); box-shadow:none;">View Plans</a></div>
                         </div>
-                        <div class="input-row">
-                            <input type="text" class="modern-input" placeholder="Share your thoughts on this resource...">
-                            <button class="btn-send">➤</button>
+                    <?php } ?>
+                </aside>
+            </div>
+        </main>
+        
+        <div class="new-modal-overlay" id="resource-modal">
+            <div class="new-modal-window">
+                <div class="new-modal-header">
+                    <div class="header-left">
+                        <span class="resource-type-badge">Type</span><h2 class="resource-title">Resource Title</h2>
+                        <div class="resource-meta"><span class="course-info">Course Name</span><span style="color:#CBD5E1">•</span><span class="star-display">★★★★★</span></div>
+                    </div>
+                    <button class="new-close-btn" onclick="closeResourceModal()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+                </div>
+                <div class="new-modal-body">
+                    <div class="modal-col-left">
+                        <div class="file-preview-card"><div class="big-file-icon">📄</div><div class="file-name-display">filename.pdf</div></div>
+                        <button class="btn-primary-download" style="width:100%;">Download Material</button>
+                        <?php if ($userPlan === 'free'): ?>
+                        <div style="margin-top: 15px; padding: 15px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 8px; text-align: center;">
+                            <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Sponsored</span><strong style="display: block; font-size: 0.9rem; margin: 5px 0; color:var(--text-main);">Audible - 1 Month Free</strong><a href="#" style="font-size: 0.8rem; color: var(--primary-blue); font-weight: 700; text-decoration: none;">Listen While You Study</a>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="modal-col-right">
+                        <div class="reviews-scroll-area"><div class="reviews-list"></div></div>
+                        <div class="review-input-area">
+                            <div class="star-select-row"><span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span></div>
+                            <div class="input-row"><input type="text" class="modern-input" placeholder="Share your thoughts..."><button class="btn-send">➤</button></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>    
-    <script src="../js/script.js?v=<?php echo time(); ?>"></script>
-</body>
+        </div>
+
+        <?php if ($userPlan === 'free'): ?>
+        <div id="exit-intent-modal" class="new-modal-overlay" style="z-index: 9999; display:none;">
+            <div class="new-modal-window" style="max-width: 450px; text-align: center; padding: 0;">
+                <div style="background: #FEE2E2; padding: 20px; border-radius: 16px 16px 0 0;"><h2 style="color: #DC2626; margin: 0;">Wait! Don't leave yet.</h2></div>
+                <div style="padding: 30px 20px;">
+                    <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.05rem;">Get <strong>CoreShare Pro</strong> today starting at just GH₵15 and completely remove all ads, upload limits, and wait times.</p>
+                    <a href="./billing.php" class="btn-card" style="background: var(--grad-primary); color: white; text-decoration: none; display:inline-block; padding: 12px 24px; margin-bottom: 10px;">See Plans</a>
+                    <button onclick="closeExitModal()" style="display:block; width:100%; background:none; border:none; color:var(--text-muted); text-decoration:underline; cursor:pointer; margin-top:10px;">Close</button>
+                </div>
+            </div>
+        </div>
+        <div id="download-interstitial" class="new-modal-overlay" style="z-index: 10000; display:none;">
+            <div class="new-modal-window" style="max-width: 450px; text-align: center; padding: 30px 20px;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Sponsor Message</span>
+                <h3 style="margin: 15px 0;">Master Your Classes with CourseHero</h3>
+                <div style="background: var(--bg-body); padding: 15px; border-radius: 8px; margin-bottom: 20px;"><strong id="dl-countdown" style="color: var(--primary-blue); font-size: 1.1rem;">Your download will begin in 5 seconds...</strong></div>
+                <button id="dl-skip-btn" class="btn-card" style="display: none; background: var(--success); color: white; border: none; width: 100%; padding: 12px; cursor:pointer;">Skip Ad & Download File</button>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <script src="../js/script.js?v=<?php echo time(); ?>"></script>
+    </body>
 </html>
