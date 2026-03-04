@@ -58,7 +58,7 @@ if (empty($_SESSION['csrf_token'])) {
 // 4. AUTOMATIC SESSION TIMEOUT (30 Minutes)
 // ---------------------------------------------------------
 if (isset($_SESSION['user_id'])) {
-    $timeout_duration = 10; // 30 minutes in seconds
+    $timeout_duration = 1800; // 30 minutes in seconds
 
     if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > $timeout_duration)) {
         session_unset();     
