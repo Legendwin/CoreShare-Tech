@@ -93,7 +93,7 @@ if ($statsResult = $conn->query($statsQuery)) {
       </div>
     </section>
     
-    <section class="pricing-section">
+<section class="pricing-section">
       <div class="pricing-header"><h2 class="section-title">Pricing & Plans</h2><p class="pricing-intro">Select the access tier that fits your academic needs.</p></div>
       
       <div class="pricing-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:20px;">
@@ -108,7 +108,15 @@ if ($statsResult = $conn->query($statsQuery)) {
               <li>Standard Search</li>
               <li>Ad-Supported Experience</li>
             </ul>
-            <div class="card-action"><a class="btn btn-ghost w-100" style="text-align:center; display:block;" href="./billing.php?plan=free">Current Plan</a></div>
+            <div class="card-action">
+              <?php if (!$isLoggedIn): ?>
+                <a class="btn btn-ghost w-100" style="text-align:center; display:block;" href="./login.php">Sign Up Free</a>
+              <?php elseif ($userPlan === 'free'): ?>
+                <button class="btn btn-ghost w-100" style="text-align:center; display:block; opacity:0.5; cursor:not-allowed;" disabled>Current Plan</button>
+              <?php else: ?>
+                <a class="btn btn-ghost w-100" style="text-align:center; display:block;" href="./billing.php?plan=free">Downgrade</a>
+              <?php endif; ?>
+            </div>
           </div>
         </div>
 
@@ -122,7 +130,15 @@ if ($statsResult = $conn->query($statsQuery)) {
               <li>Ad-Free Experience</li>
               <li>Perfect for Finals Week</li>
             </ul>
-            <div class="card-action"><a class="btn btn-ghost w-100" style="text-align:center; display:block; border-color:#D97706; color:#D97706;" href="./billing.php?plan=exam_pass">Get Pass</a></div>
+            <div class="card-action">
+              <?php if (!$isLoggedIn): ?>
+                <a class="btn btn-ghost w-100" style="text-align:center; display:block; border-color:#D97706; color:#D97706;" href="./login.php">Get Pass</a>
+              <?php elseif ($userPlan === 'exam_pass'): ?>
+                <button class="btn btn-ghost w-100" style="text-align:center; display:block; border-color:#D97706; color:#D97706; opacity:0.5; cursor:not-allowed;" disabled>Current Plan</button>
+              <?php else: ?>
+                <a class="btn btn-ghost w-100" style="text-align:center; display:block; border-color:#D97706; color:#D97706;" href="./billing.php?plan=exam_pass">Get Pass</a>
+              <?php endif; ?>
+            </div>
           </div>
         </div>
 
@@ -136,7 +152,15 @@ if ($statsResult = $conn->query($statsQuery)) {
               <li>Advanced Deep Search</li>
               <li>Priority Support</li>
             </ul>
-            <div class="card-action"><a class="btn btn-ghost w-100" style="text-align:center; display:block;" href="./billing.php?plan=pro">Upgrade Monthly</a></div>
+            <div class="card-action">
+              <?php if (!$isLoggedIn): ?>
+                <a class="btn btn-ghost w-100" style="text-align:center; display:block;" href="./login.php">Upgrade Monthly</a>
+              <?php elseif ($userPlan === 'pro'): ?>
+                <button class="btn btn-ghost w-100" style="text-align:center; display:block; opacity:0.5; cursor:not-allowed;" disabled>Current Plan</button>
+              <?php else: ?>
+                <a class="btn btn-ghost w-100" style="text-align:center; display:block;" href="./billing.php?plan=pro">Upgrade Monthly</a>
+              <?php endif; ?>
+            </div>
           </div>
         </div>
 
@@ -151,13 +175,21 @@ if ($statsResult = $conn->query($statsQuery)) {
               <li>Saves GH₵30 total</li>
               <li>Priority Feature Requests</li>
             </ul>
-            <div class="card-action"><a class="btn btn-primary w-100" style="text-align:center; display:block;" href="./billing.php?plan=semester">Get Semester Plan</a></div>
+            <div class="card-action">
+              <?php if (!$isLoggedIn): ?>
+                <a class="btn btn-primary w-100" style="text-align:center; display:block;" href="./login.php">Get Semester Plan</a>
+              <?php elseif ($userPlan === 'semester'): ?>
+                <button class="btn btn-primary w-100" style="text-align:center; display:block; opacity:0.7; cursor:not-allowed;" disabled>Current Plan</button>
+              <?php else: ?>
+                <a class="btn btn-primary w-100" style="text-align:center; display:block;" href="./billing.php?plan=semester">Get Semester Plan</a>
+              <?php endif; ?>
+            </div>
           </div>
         </div>
 
       </div>
     </section>
-  </main>
+    </main>
   <footer>© <span id="year"></span> CoreShare Tech — Built for sharing knowledge. • <a href="./contact.php">Contact</a></footer>
   <script src="../js/script.js?v=<?php echo time(); ?>"></script>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
