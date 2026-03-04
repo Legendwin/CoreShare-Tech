@@ -46,6 +46,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $programme = $_POST['programme'];
     $grade = $_POST['grade'];
 
+    // --- Check if a resource with this title already exists ---
+    $checkStmt = $conn->prepare("SELECT id FROM resources WHERE title = ? LIMIT 1");
+    $checkStmt->bind_param("s", $title);
+    $checkStmt->execute();
+    $checkStmt->store_result();
+    
+    if ($checkStmt->num_rows > 0) {
+        $checkStmt->close();
+        // UPDATED ERROR MESSAGE HERE:
+        redirectWithError("A resource with this title already exists. Please change the file name/title and try uploading again.");
+    }
+    $checkStmt->close();
+    // ---------------------------------------------------------------
+
     $target_dir = "../uploads/";
     if (!file_exists($target_dir)) mkdir($target_dir, 0755, true);
     
