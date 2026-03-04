@@ -140,6 +140,7 @@ if ($isLoggedIn && $userPlan === 'free') {
                                     <div class="form-row-split">
                                         <div class="input-group"><label class="category-label">Type</label>
                                             <select class="category-select" name="type" required>
+                                                <option>All Types</option>
                                                 <option value="Lecture Notes">Lecture Notes</option>
                                                 <option value="Exam Paper">Exam Paper</option>
                                                 <option value="Assignment">Assignment</option>
@@ -150,6 +151,7 @@ if ($isLoggedIn && $userPlan === 'free') {
                                         </div>
                                         <div class="input-group"><label class="category-label">Level</label>
                                             <select class="category-select" name="grade_level" required>
+                                                <option>All Levels</option>
                                                 <option value="Year 1">Year 1</option>
                                                 <option value="Year 2">Year 2</option>
                                                 <option value="Year 3">Year 3</option>
