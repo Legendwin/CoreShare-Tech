@@ -11,12 +11,32 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-$servername = "localhost";
-$username = "root"; 
-$password = ""; 
-$dbname = "coreshare_db";
+// ---------------------------------------------------------
+// CLOUD VS LOCAL DATABASE CONNECTION
+// ---------------------------------------------------------
+$db_url = getenv('DATABASE_URL');
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+if ($db_url) {
+    // We are on DigitalOcean - Parse the provided database URL
+    $db = parse_url($db_url);
+    $servername = $db['host'];
+    $username = $db['user'];
+    $password = $db['pass'];
+    $dbname = ltrim($db['path'], '/');
+    $port = $db['port'];
+    
+    // Connect to DigitalOcean Database
+    $conn = mysqli_init();
+    $conn->real_connect($servername, $username, $password, $dbname, $port);
+} else {
+    // We are on Localhost (XAMPP/WAMP)
+    $servername = "localhost";
+    $username = "root"; 
+    $password = ""; 
+    $dbname = "coreshare_db";
+    
+    $conn = new mysqli($servername, $username, $password, $dbname);
+}
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -36,3 +56,4 @@ if (isset($_SESSION['user_id'])) {
     }
     $_SESSION['LAST_ACTIVITY'] = time();
 }
+?>
