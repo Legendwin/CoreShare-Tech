@@ -35,9 +35,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($updateStmt->execute()) {
             
-            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+            // Cloud-safe protocol check (Detects DigitalOcean HTTPS)
+            $protocol = (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
             $domain = $_SERVER['HTTP_HOST'];
-            $resetLink = "$protocol://$domain/CoreShare%20Tech/html/reset.php?token=$token&email=" . urlencode($email);
+            
+            // Removed the local XAMPP folder name, pointing directly to the HTML folder
+            $resetLink = "$protocol://$domain/html/reset.php?token=$token&email=" . urlencode($email);
             
             $subject = "Password Reset Request - CoreShare Tech";
             $message = "Hello,\n\nYou requested a password reset for your CoreShare Tech account.\n\n" .
