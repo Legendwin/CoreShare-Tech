@@ -194,6 +194,51 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
 }
 
+/* --- Modern Select Dropdowns --- */
+select, .category-select, select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 12px 16px;
+    padding-right: 40px; /* Space for the custom arrow */
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    /* Custom SVG Dropdown Arrow */
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+/* Focus State (Glow Effect) */
+select:focus, .category-select:focus, select.form-control:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    background-color: var(--bg-surface);
+}
+
+/* Dark Theme Arrow Color Override */
+[data-theme="dark"] select, 
+[data-theme="dark"] .category-select, 
+[data-theme="dark"] select.form-control {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+/* Dropdown Menu Items */
+select option {
+    background-color: var(--bg-surface);
+    color: var(--text-main);
+    padding: 10px;
+}
 
 /* --- RESPONSIVE MEDIA QUERIES --- */
 @media (max-width: 768px) {
