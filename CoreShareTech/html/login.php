@@ -72,10 +72,10 @@ if (isset($_SESSION['user_id'])) {
                     <div class="input-group">
                         <label>I am a...</label>
                         <select id="role-select" name="role">
-                            <option value="student">Admin</option>
+                            <option value="admin">Admin</option>
                             <option value="student">Student</option>
                             <option value="educator">Educator</option>
-                            </select>
+                        </select>
                     </div>
 
                     <div class="input-group">
