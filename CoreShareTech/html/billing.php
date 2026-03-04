@@ -20,7 +20,7 @@ if ($isLoggedIn) {
 
 $planMeta = [
     'pro' => ['name' => 'Pro Monthly', 'cost' => '30.00', 'sub' => 'Monthly Subscription', 'desc' => 'Unlimited uploads, downloads, and custom collections for 30 days.'],
-    'semester' => ['name' => 'Semester Plan', 'cost' => '99.00', 'sub' => '4-Month Subscription', 'desc' => 'All Pro features completely unlocked for an entire academic term.'],
+    'semester' => ['name' => 'Semester Plan', 'cost' => '90.00', 'sub' => '4-Month Subscription', 'desc' => 'All Pro features completely unlocked for an entire academic term.'],
     'exam_pass' => ['name' => 'Exam Season Pass', 'cost' => '15.00', 'sub' => '7-Day Unlimited Access', 'desc' => 'Download everything you need ad-free for 1 week. Perfect for cramming.']
 ];
 
@@ -216,8 +216,8 @@ if (isset($_GET['plan']) && in_array($_GET['plan'], $allowed)) {
                 <div style="position:absolute; top:-6px; right:20px; background:var(--primary-blue); color:white; padding:4px 12px; border-radius:6px; font-size:0.75rem; font-weight:800; letter-spacing:1px;">BEST VALUE</div>
                 <div>
                     <strong style="font-size:1.25rem; color:var(--text-main);">Semester Plan</strong>
-                    <div class="plan-price" style="margin-top:12px; margin-bottom: 20px;"><span style="font-size:2.5rem; font-weight:800; color:var(--text-main); line-height:1;">GH₵99</span><span style="font-size:1rem; color:var(--text-muted);">/term</span></div>
-                    <ul style="color:var(--text-muted); padding-left:18px; line-height:1.8; margin-bottom:24px;"><li><strong>All Pro Features</strong></li><li>Full 4-Month Coverage</li><li>Saves GH₵21 Total</li></ul>
+                    <div class="plan-price" style="margin-top:12px; margin-bottom: 20px;"><span style="font-size:2.5rem; font-weight:800; color:var(--text-main); line-height:1;">GH₵90</span><span style="font-size:1rem; color:var(--text-muted);">/term</span></div>
+                    <ul style="color:var(--text-muted); padding-left:18px; line-height:1.8; margin-bottom:24px;"><li><strong>All Pro Features</strong></li><li>Full 4-Month Coverage</li><li>Saves GH₵30 Total</li></ul>
                 </div>
                 <div style="margin-top:auto;"><?php if ($isLoggedIn && $currentPlan === 'semester'): ?><button class="btn-card disabled" style="display:block; width:100%; text-align:center;">Current Plan</button><?php else: ?><a class="btn-card" style="display:block; text-align:center;" href="?plan=semester">Get Semester Plan</a><?php endif; ?></div>
                 </div>
