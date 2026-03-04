@@ -194,8 +194,8 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
 }
 
-/* --- Modern Select Dropdowns --- */
-select, .category-select, select.form-control {
+/* --- 1. Modern Select Dropdowns (Select Pickers) --- */
+select, .category-select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -219,72 +219,26 @@ select, .category-select, select.form-control {
     background-size: 16px;
 }
 
-/* Focus State (Glow Effect) */
-select:focus, .category-select:focus, select.form-control:focus {
+select:focus, .category-select:focus {
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-    background-color: var(--bg-surface);
 }
 
-/* Dark Theme Arrow Color Override */
-[data-theme="dark"] select, 
-[data-theme="dark"] .category-select, 
-[data-theme="dark"] select.form-control {
+[data-theme="dark"] select, [data-theme="dark"] .category-select {
     background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 }
 
-/* Dropdown Menu Items */
 select option {
     background-color: var(--bg-surface);
     color: var(--text-main);
     padding: 10px;
 }
 
-/* --- Modern Text Inputs & Textareas --- */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-textarea,
-.form-control,
-.input-field,
-.modern-input {
-    appearance: none;
-    -webkit-appearance: none;
-    background-color: var(--input-bg);
-    color: var(--text-main);
-    font-family: inherit;
-    font-size: 0.95rem;
-    padding: 12px 16px;
-    border: 1px solid var(--border-subtle);
+select::picker {
     border-radius: 8px;
-    width: 100%;
-    outline: none;
-    transition: all 0.2s ease;
 }
 
-/* Textarea Specific Tweaks */
-textarea {
-    resize: vertical;
-    min-height: 120px;
-    line-height: 1.5;
-}
-
-/* Focus State (Matching Glow Effect) */
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="number"]:focus,
-textarea:focus,
-.form-control:focus,
-.input-field:focus,
-.modern-input:focus {
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-    background-color: var(--bg-surface);
-}
-
-/* --- Range Slider Picker --- */
+/* --- 2. Range Slider (Rating Picker) --- */
 input[type="range"] {
     appearance: none;
     -webkit-appearance: none;
@@ -297,8 +251,8 @@ input[type="range"] {
 }
 
 input[type="range"]::-webkit-slider-thumb {
-    appearance: none;
     -webkit-appearance: none;
+    appearance: none;
     width: 20px;
     height: 20px;
     border-radius: 50%;
