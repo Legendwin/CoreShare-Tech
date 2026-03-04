@@ -457,3 +457,23 @@ window.closeExitModal = function() {
     const exitModal = document.getElementById('exit-intent-modal');
     if (exitModal) { exitModal.classList.remove('open'); setTimeout(() => exitModal.style.display = 'none', 300); }
 };
+
+// ---------------------------------------------------------
+// 8. Password Visibility Toggle
+// ---------------------------------------------------------
+window.togglePassword = function(inputId, iconSpan) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    if (input.type === 'password') {
+        // Show password
+        input.type = 'text';
+        // Highlight the icon so the user knows it's active
+        iconSpan.style.color = 'var(--primary-blue)'; 
+    } else {
+        // Hide password
+        input.type = 'password';
+        // Return icon to default color
+        iconSpan.style.color = 'var(--text-muted)'; 
+    }
+};
