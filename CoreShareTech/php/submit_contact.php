@@ -1,4 +1,6 @@
 <?php
+// ADD THIS LINE SO THE FILE CAN READ YOUR DATABASE SESSIONS
+require 'db_connect.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
