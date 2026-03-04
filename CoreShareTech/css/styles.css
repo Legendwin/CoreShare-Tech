@@ -276,8 +276,7 @@ body {
 .modal-col-left { width: 40%; background: var(--bg-body); padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--border-subtle); }
 .file-preview-card { background: var(--bg-surface); padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); text-align: center; width: 100%; margin-bottom: 20px; border: 1px solid var(--border-subtle); }
 .big-file-icon { font-size: 4rem; margin-bottom: 15px; display: block; }
-.file-name-display { font-weight: 700; color: var(--text-main); word-break: break-all; }
-.btn-primary-download { width: 100%; padding: 14px; background: var(--grad-primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); transition: all 0.2s ease; }
+.file-name-display { font-weight: 700; color: var(--text-main); overflow-wrap: break-word; word-break: break-word; line-height: 1.4; padding: 0 10px; }.btn-primary-download { width: 100%; padding: 14px; background: var(--grad-primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); transition: all 0.2s ease; }
 
 .modal-col-right { flex: 1; display: flex; flex-direction: column; background: var(--bg-surface); }
 .reviews-scroll-area { flex: 1; padding: 24px; overflow-y: auto; }
