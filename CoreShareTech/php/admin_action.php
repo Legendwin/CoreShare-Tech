@@ -6,7 +6,7 @@ use PHPMailer\PHPMailer\Exception;
 ob_clean(); 
 header('Content-Type: application/json');
 
-session_start();
+// REMOVED session_start() SO DB_CONNECT HANDLES IT
 require 'db_connect.php';
 
 // Load environment variables or use defaults
@@ -64,9 +64,11 @@ if (isset($data['id']) && isset($data['action'])) {
                       "Status: " . ucfirst($action);
             
             $email_sent = false;
-            if (file_exists(__DIR__ . '../vendor/autoload.php')) {
+            // ADDED THE MISSING SLASH HERE
+            if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
                 try {
-                    require __DIR__ . '../vendor/autoload.php';
+                    // ADDED THE MISSING SLASH HERE
+                    require __DIR__ . '/../vendor/autoload.php';
                     
                     $mail = new PHPMailer(true);
                     $mail->isSMTP();

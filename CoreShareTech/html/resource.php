@@ -136,10 +136,10 @@ if ($isLoggedIn && $userPlan === 'free') {
                                 <div class="form-grid">
                                     <div class="input-group"><label class="category-label">Resource Title</label><input type="text" name="title" class="input-field" required></div>
                                     <div class="input-group"><label class="category-label">Course Name</label><input type="text" name="course_name" class="input-field" required></div>
-                                    <div class="input-group"><label class="category-label">Programme</label><input type="text" name="programme" id="edit-programme" class="input-field" required></div>
+                                    <div class="input-group"><label class="category-label">Programme</label><input type="text" name="programme" class="input-field" required></div>
                                     <div class="form-row-split">
                                         <div class="input-group"><label class="category-label">Type</label>
-                                            <select class="category-select" name="type" id="edit-type" required>
+                                            <select class="category-select" name="type" required>
                                                 <option value="Lecture Notes">Lecture Notes</option>
                                                 <option value="Exam Paper">Exam Paper</option>
                                                 <option value="Assignment">Assignment</option>
@@ -149,7 +149,7 @@ if ($isLoggedIn && $userPlan === 'free') {
                                             </select>
                                         </div>
                                         <div class="input-group"><label class="category-label">Level</label>
-                                            <select class="category-select" name="grade_level" id="edit-grade" required>
+                                            <select class="category-select" name="grade_level" required>
                                                 <option value="Year 1">Year 1</option>
                                                 <option value="Year 2">Year 2</option>
                                                 <option value="Year 3">Year 3</option>

@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const file = fi.files[0];
                 if (file.size > 524288000) { showToast('File is too large (Max 500MB)', 'error'); fi.value = ''; return; }
                 const txtEl = dz.querySelector('.file-text');
-                if (txtEl) { txtEl.innerHTML = `Selected: <strong>${escapeHtml(file.name)}</strong>`; txtEl.style.color = '#3B82F6'; }
+                if (txtEl) { txtEl.innerHTML = `<div style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(file.name)}">Selected: <strong>${escapeHtml(file.name)}</strong></div>`; txtEl.style.color = '#3B82F6'; }
                 const titleInput = document.querySelector('input[name="title"]');
                 if (titleInput && !titleInput.value) { titleInput.value = file.name.replace(/\.[^/.]+$/, ""); }
                 if (catBox) catBox.style.display = 'flex';
