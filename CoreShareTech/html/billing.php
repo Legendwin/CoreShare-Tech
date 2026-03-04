@@ -21,7 +21,7 @@ if ($isLoggedIn) {
 $planMeta = [
     'pro' => ['name' => 'Pro Monthly', 'cost' => '30.00', 'sub' => 'Monthly Subscription', 'desc' => 'Unlimited uploads, downloads, and custom collections for 30 days.'],
     'semester' => ['name' => 'Semester Plan', 'cost' => '99.00', 'sub' => '4-Month Subscription', 'desc' => 'All Pro features completely unlocked for an entire academic term.'],
-    'exam_pass' => ['name' => 'Exam Season Pass', 'cost' => '20.00', 'sub' => '7-Day Unlimited Access', 'desc' => 'Download everything you need ad-free for 1 week. Perfect for cramming.']
+    'exam_pass' => ['name' => 'Exam Season Pass', 'cost' => '15.00', 'sub' => '7-Day Unlimited Access', 'desc' => 'Download everything you need ad-free for 1 week. Perfect for cramming.']
 ];
 
 // Handle downgrades to free plan normally
@@ -193,7 +193,7 @@ if (isset($_GET['plan']) && in_array($_GET['plan'], $allowed)) {
                 <div class="card-body" style="display:flex; flex-direction:column; height:100%;">
                 <div>
                     <strong style="font-size:1.25rem; color:var(--text-main);">Exam Pass</strong>
-                    <div class="plan-price" style="margin-top:12px; margin-bottom: 20px;"><span style="font-size:2.5rem; font-weight:800; color:var(--text-main); line-height:1;">GH₵20</span><span style="font-size:1rem; color:var(--text-muted);">/wk</span></div>
+                    <div class="plan-price" style="margin-top:12px; margin-bottom: 20px;"><span style="font-size:2.5rem; font-weight:800; color:var(--text-main); line-height:1;">GH₵15</span><span style="font-size:1rem; color:var(--text-muted);">/wk</span></div>
                     <ul style="color:var(--text-muted); padding-left:18px; line-height:1.8; margin-bottom:24px;"><li>7 Days Unlimited Access</li><li>Unlimited Downloads</li><li>Ad-Free Experience</li></ul>
                 </div>
                 <div style="margin-top:auto;"><?php if ($isLoggedIn && $currentPlan === 'exam_pass'): ?><button class="btn-card disabled" style="display:block; width:100%; text-align:center;">Current Plan</button><?php else: ?><a class="btn-card" style="display:block; text-align:center; background:transparent; color:#D97706; border:1px solid #D97706;" href="?plan=exam_pass">Select Pass</a><?php endif; ?></div>

@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $course_name = trim($_POST['course_name']);
     $type = $_POST['type'];
     $programme = $_POST['programme'];
-    $grade = $_POST['grade'];
+    $grade = $_POST['grade_level'];
 
     // --- Check if a resource with this title already exists ---
     $checkStmt = $conn->prepare("SELECT id FROM resources WHERE title = ? LIMIT 1");

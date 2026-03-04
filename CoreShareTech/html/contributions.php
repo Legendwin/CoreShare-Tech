@@ -119,9 +119,9 @@ require_once '../php/check_plan.php';
                 </div>
                 <form id="edit-resource-form" class="form-grid">
                     <input type="hidden" name="id" id="edit-resource-id">
-                    <div class="input-group"><label class="category-label">Resource Title</label><input type="text" name="title" id="edit-title" class="input-field" required></div>
-                    <div class="input-group"><label class="category-label">Course Name</label><input type="text" name="course_name" id="edit-course" class="input-field" required></div>
-                    <div class="input-group"><label class="category-label">Programme</label><input type="text" name="programme" id="edit-programme" class="input-field" required></div>
+                    <div class="input-group"><label class="category-label">Resource Title</label><input type="text" name="title" id="edit-title" class="input-field" required placeholder="Introduction to Programming"></div>
+                    <div class="input-group"><label class="category-label">Course Name</label><input type="text" name="course_name" id="edit-course" class="input-field" required placeholder="CSNS 141 - Digital Electronics"></div>
+                    <div class="input-group"><label class="category-label">Programme</label><input type="text" name="programme" id="edit-programme" class="input-field" required placeholder="BSc. Computer Science"></div>
                     <div class="form-row-split">
                         <div class="input-group"><label class="category-label">Type</label>
                             <select class="category-select" name="type" id="edit-type" required>

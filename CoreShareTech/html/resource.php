@@ -134,9 +134,9 @@ if ($isLoggedIn && $userPlan === 'free') {
                             <div class="upload-placeholder" id="upload-placeholder"><div class="upload-placeholder-icon">⬅️</div><div class="upload-placeholder-text">Select a file to continue</div></div>
                             <div class="upload-form-container" id="category-box" style="display:none;"> 
                                 <div class="form-grid">
-                                    <div class="input-group"><label class="category-label">Resource Title</label><input type="text" name="title" class="input-field" required></div>
-                                    <div class="input-group"><label class="category-label">Course Name</label><input type="text" name="course_name" class="input-field" required></div>
-                                    <div class="input-group"><label class="category-label">Programme</label><input type="text" name="programme" class="input-field" required></div>
+                                    <div class="input-group"><label class="category-label">Resource Title</label><input type="text" name="title" class="input-field" required placeholder="Introduction to Programming"></div>
+                                    <div class="input-group"><label class="category-label">Course Name</label><input type="text" name="course_name" class="input-field" required placeholder="CSNS 141 - Digital Electronics"></div>
+                                    <div class="input-group"><label class="category-label">Programme</label><input type="text" name="programme" class="input-field" required placeholder="BSc. Computer Science"></div>
                                     <div class="form-row-split">
                                         <div class="input-group"><label class="category-label">Type</label>
                                             <select class="category-select" name="type" required>
