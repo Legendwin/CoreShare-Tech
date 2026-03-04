@@ -124,7 +124,7 @@ if ($isLoggedIn && $userPlan === 'free') {
                     <button class="new-close-btn" onclick="closeUploadModal()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
                 </div>
                 <form action="../php/upload.php" method="POST" enctype="multipart/form-data" id="main-upload-form" style="display:flex; flex:1; overflow:hidden;">
-                    <input type="hidden" name="csrf_token" value="<?php echo isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : ''; ?>">           
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">           
                     <input type="file" id="file-input" name="resource_file" accept=".pdf,.docx,.doc,.pptx,.ppt,.txt,.md,.rtf,.odp">
                     <div class="new-modal-body" style="width:100%;">
                         <div class="upload-left-col">
@@ -137,6 +137,7 @@ if ($isLoggedIn && $userPlan === 'free') {
                                 <div class="form-grid">
                                     <div class="input-group"><label class="category-label">Resource Title</label><input type="text" name="title" class="input-field" required></div>
                                     <div class="input-group"><label class="category-label">Course Name</label><input type="text" name="course_name" class="input-field" required></div>
+                                    <div class="input-group"><label class="category-label">Programme</label><input type="text" name="programme" id="edit-programme" class="input-field" required></div>
                                     <div class="form-row-split">
                                         <div class="input-group"><label class="category-label">Type</label>
                                             <select class="category-select" name="type" id="edit-type" required>
@@ -159,7 +160,6 @@ if ($isLoggedIn && $userPlan === 'free') {
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="input-group"><label class="category-label">Programme</label><select class="category-select" name="programme" required><option value="" disabled selected>Select Programme...</option><option value="BSc Computer Science">BSc. Computer Science</option></select></div>
                                     <div class="upload-actions"><button type="submit" class="btn-card btn-upload">Upload Resource</button><button type="button" id="btn-reset-upload" class="btn-card btn-cancel">Cancel</button></div>
                                 </div>
                             </div>

@@ -92,16 +92,6 @@ $numResults = $result ? $result->num_rows : 0;
                         ?>
                     </div>
                 </div>
-
-                <aside class="resource-sidebar">
-                    <?php if ($userPlan === 'free') { ?>
-                        <div class="card" style="border:1px solid var(--border-subtle); position: sticky; top: 20px;">
-                            <strong style="color:var(--text-main);">Sponsored</strong>
-                            <div style="margin-top:10px;color:var(--text-muted); font-size:0.95rem;">Ad: Upgrade to Pro for unlimited downloads, direct edits, and no ads.</div>
-                            <div style="margin-top:16px;"><a href="./billing.php" class="btn-card" style="display:block; text-align:center; background:transparent; color:var(--primary-blue); border:1px solid var(--primary-blue); box-shadow:none;">View Plans</a></div>
-                        </div>
-                    <?php } ?>
-                </aside>
             </div>
         </main>
         
