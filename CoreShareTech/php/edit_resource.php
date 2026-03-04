@@ -9,20 +9,24 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Read the incoming JSON payload (Because JS fetch uses JSON.stringify)
+$data = json_decode(file_get_contents("php://input"), true);
+
 // 2. Handle Request
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($data) {
     // Validate CSRF
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    if (!isset($data['csrf_token']) || $data['csrf_token'] !== $_SESSION['csrf_token']) {
         echo json_encode(["success" => false, "message" => "Security check failed. Refresh page."]);
         exit;
     }
 
-    $resource_id = intval($_POST['resource_id']);
-    $title = trim($_POST['title']);
-    $course_name = trim($_POST['course_name']);
-    $type = $_POST['type'];
-    $programme = $_POST['programme'];
-    $grade = $_POST['grade'];
+    // Map the correct variable names sent from the JS fetch request
+    $resource_id = intval($data['id']);
+    $title = trim($data['title']);
+    $course_name = trim($data['course_name']);
+    $type = $data['type'];
+    $programme = $data['programme'];
+    $grade = $data['grade_level'];
     $user_id = $_SESSION['user_id'];
 
     if (empty($title) || empty($programme) || empty($type)) {
@@ -38,17 +42,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sssssii", $title, $course_name, $type, $programme, $grade, $resource_id, $user_id);
 
     if ($stmt->execute()) {
-        if ($stmt->affected_rows >= 0) { // 0 means no changes made, but query successful
-            echo json_encode(["success" => true, "message" => "Resource updated successfully"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Update failed or permission denied"]);
-        }
+        echo json_encode(["success" => true, "message" => "Resource updated successfully"]);
     } else {
         echo json_encode(["success" => false, "message" => "Database error: " . $conn->error]);
     }
     $stmt->close();
 } else {
-    echo json_encode(["success" => false, "message" => "Invalid request method"]);
+    echo json_encode(["success" => false, "message" => "Invalid request format. Expected JSON."]);
 }
 $conn->close();
 ?>
