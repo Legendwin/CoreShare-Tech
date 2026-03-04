@@ -48,16 +48,6 @@ if ($isLoggedIn && $userPlan === 'free') {
                 <?php else: ?>
                     <a href="./login.php" class="nav-link" style="color:var(--primary-blue); font-weight:700;">Login</a>
                 <?php endif; ?>
-
-                <?php if ($userPlan === 'free'): ?>
-                <div style="margin-top:auto; padding-top:20px;">
-                    <div style="background:var(--bg-surface); border:1px solid var(--border-subtle); padding:15px; border-radius:8px; text-align:center;">
-                        <span style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:5px; text-transform:uppercase;">Sponsored</span>
-                        <strong style="font-size:0.85rem; color:var(--text-main); display:block;">Grammarly Premium</strong>
-                        <a href="#" style="font-size:0.8rem; color:var(--primary-blue); font-weight:700; text-decoration:none;">Learn More</a>
-                    </div>
-                </div>
-                <?php endif; ?>
             </nav>
         </aside>
 
@@ -74,13 +64,6 @@ if ($isLoggedIn && $userPlan === 'free') {
                     <?php endif; ?>
                 </div>
             </header>
-
-            <?php if ($userPlan === 'free'): ?>
-            <div style="width:100%; max-width:1100px; margin: 0 auto 24px auto; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:8px; padding:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                <div style="display:flex; align-items:center; gap:15px;"><span style="background:#FEE2E2; color:#EF4444; padding:4px 8px; border-radius:4px; font-size:0.75rem; font-weight:700;">AD</span><strong style="color:var(--text-main); font-size:0.95rem;">Master Your Classes with CourseHero</strong></div>
-                <a href="#" class="btn-card" style="padding:6px 12px; border:1px solid var(--primary-blue); color:var(--primary-blue); background:transparent; font-size:0.85rem;">View Solutions</a>
-            </div>
-            <?php endif; ?>
 
             <div class="resource-page-layout">
                 <div class="resource-main-col">
@@ -106,20 +89,6 @@ if ($isLoggedIn && $userPlan === 'free') {
                         ?>
                     </div>
                 </div>
-                <aside class="resource-sidebar">
-                    <?php if ($userPlan === 'free') { ?>
-                        <div class="card" style="border:1px solid var(--border-subtle); position: sticky; top: 20px;">
-                            <strong style="color:var(--text-main);">Sponsored</strong>
-                            <div style="margin-top:10px;color:var(--text-muted); font-size:0.95rem;">Ad: Upgrade to Pro for unlimited downloads, direct edits, and no ads.</div>
-                            <div style="margin-top:16px;"><a href="./billing.php" class="btn-card" style="display:block; text-align:center; background:transparent; color:var(--primary-blue); border:1px solid var(--primary-blue); box-shadow:none;">View Plans</a></div>
-                        </div>
-                    <?php } else { ?>
-                        <div class="card" style="border:1px solid var(--primary-blue); text-align:center; background:var(--primary-light); position: sticky; top: 20px;">
-                            <strong style="color:var(--primary-blue);"><?php echo ucwords(str_replace('_', ' ', $userPlan)); ?> Member</strong>
-                            <div style="margin-top:8px; color:var(--text-muted); font-size:0.9rem;">No ads • Unlimited downloads</div>
-                        </div>
-                    <?php } ?>
-                </aside>
             </div>
         </main>
         
@@ -136,11 +105,6 @@ if ($isLoggedIn && $userPlan === 'free') {
                     <div class="modal-col-left">
                         <div class="file-preview-card"><div class="big-file-icon">📄</div><div class="file-name-display">filename.pdf</div></div>
                         <button class="btn-primary-download" style="width:100%;">Download Material</button>
-                        <?php if ($userPlan === 'free'): ?>
-                        <div style="margin-top: 15px; padding: 15px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 8px; text-align: center;">
-                            <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Sponsored</span><strong style="display: block; font-size: 0.9rem; margin: 5px 0; color:var(--text-main);">Audible - 1 Month Free</strong><a href="#" style="font-size: 0.8rem; color: var(--primary-blue); font-weight: 700; text-decoration: none;">Listen While You Study</a>
-                        </div>
-                        <?php endif; ?>
                     </div>
                     <div class="modal-col-right">
                         <div class="reviews-scroll-area"><div class="reviews-list"></div></div>
@@ -174,8 +138,26 @@ if ($isLoggedIn && $userPlan === 'free') {
                                     <div class="input-group"><label class="category-label">Resource Title</label><input type="text" name="title" class="input-field" required></div>
                                     <div class="input-group"><label class="category-label">Course Name</label><input type="text" name="course_name" class="input-field" required></div>
                                     <div class="form-row-split">
-                                        <div class="input-group"><label class="category-label">Type</label><select class="category-select" name="type" required><option value="" disabled selected>Select...</option><option value="Lecture Notes">Lecture Notes</option><option value="Exam Paper">Exam Paper</option></select></div>
-                                        <div class="input-group"><label class="category-label">Level</label><select class="category-select" name="grade" required><option value="" disabled selected>Select...</option><option value="Year 1">Year 1</option><option value="Year 2">Year 2</option></select></div>
+                                        <div class="input-group"><label class="category-label">Type</label>
+                                            <select class="category-select" name="type" id="edit-type" required>
+                                                <option value="Lecture Notes">Lecture Notes</option>
+                                                <option value="Exam Paper">Exam Paper</option>
+                                                <option value="Assignment">Assignment</option>
+                                                <option value="Textbook">Textbook</option>
+                                                <option value="Presentation">Presentation</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="input-group"><label class="category-label">Level</label>
+                                            <select class="category-select" name="grade_level" id="edit-grade" required>
+                                                <option value="Year 1">Year 1</option>
+                                                <option value="Year 2">Year 2</option>
+                                                <option value="Year 3">Year 3</option>
+                                                <option value="Year 4">Year 4</option>
+                                                <option value="Grad">Graduate</option>
+                                                <option value="PhD">PhD</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="input-group"><label class="category-label">Programme</label><select class="category-select" name="programme" required><option value="" disabled selected>Select Programme...</option><option value="BSc Computer Science">BSc. Computer Science</option></select></div>
                                     <div class="upload-actions"><button type="submit" class="btn-card btn-upload">Upload Resource</button><button type="button" id="btn-reset-upload" class="btn-card btn-cancel">Cancel</button></div>
@@ -186,42 +168,6 @@ if ($isLoggedIn && $userPlan === 'free') {
                 </form>
             </div>
         </div>
-
-        <?php if ($userPlan === 'free'): ?>
-        <div id="promo-modal" class="new-modal-overlay" style="z-index: 9999;">
-            <div class="new-modal-window" style="max-width: 500px; text-align: center; padding: 0;">
-                <div style="background: var(--bg-surface); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); border-radius: 16px 16px 0 0;">
-                    <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Advertisement</span><button onclick="closeAdModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
-                </div>
-                <div style="padding: 40px 20px;">
-                    <h2 style="margin-bottom: 15px; color: var(--text-main);">Tired of limits?</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 1.05rem;">Upgrade to CoreShare Pro to unlock unlimited downloads, custom collections, and an ad-free experience.</p>
-                    <a href="./billing.php" class="btn-card" style="background: var(--grad-primary); color: white; border: none; text-decoration: none; padding: 12px 24px;">View Plans (From GH₵15)</a>
-                </div>
-                <div style="padding-bottom: 20px;"><button onclick="closeAdModal()" style="background:none; border:none; color:var(--text-muted); text-decoration:underline; cursor:pointer;">No thanks</button></div>
-            </div>
-        </div>
-
-        <div id="exit-intent-modal" class="new-modal-overlay" style="z-index: 9999; display:none;">
-            <div class="new-modal-window" style="max-width: 450px; text-align: center; padding: 0;">
-                <div style="background: #FEE2E2; padding: 20px; border-radius: 16px 16px 0 0;"><h2 style="color: #DC2626; margin: 0;">Wait! Don't leave yet.</h2></div>
-                <div style="padding: 30px 20px;">
-                    <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.05rem;">Get <strong>CoreShare Pro</strong> today starting at just GH₵15 and completely remove all ads, upload limits, and wait times.</p>
-                    <a href="./billing.php" class="btn-card" style="background: var(--grad-primary); color: white; text-decoration: none; display:inline-block; padding: 12px 24px; margin-bottom: 10px;">See Plans</a>
-                    <button onclick="closeExitModal()" style="display:block; width:100%; background:none; border:none; color:var(--text-muted); text-decoration:underline; cursor:pointer; margin-top:10px;">Close</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="download-interstitial" class="new-modal-overlay" style="z-index: 10000; display:none;">
-            <div class="new-modal-window" style="max-width: 450px; text-align: center; padding: 30px 20px;">
-                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Sponsor Message</span>
-                <h3 style="margin: 15px 0;">Master Your Classes with CourseHero</h3>
-                <div style="background: var(--bg-body); padding: 15px; border-radius: 8px; margin-bottom: 20px;"><strong id="dl-countdown" style="color: var(--primary-blue); font-size: 1.1rem;">Your download will begin in 5 seconds...</strong></div>
-                <button id="dl-skip-btn" class="btn-card" style="display: none; background: var(--success); color: white; border: none; width: 100%; padding: 12px; cursor:pointer;">Skip Ad & Download File</button>
-            </div>
-        </div>
-        <?php endif; ?>
         <script src="../js/script.js?v=<?php echo time(); ?>"></script>
     </body>
 </html>

@@ -49,17 +49,6 @@ require_once '../php/check_plan.php';
                     <a href="./moderation.php" class="nav-link">Moderation</a>
                 <?php endif; ?>
                 <a href="../php/logout.php" class="nav-link" style="color:#EF4444; font-weight:700;">Logout</a>
-
-                <?php if ($userPlan === 'free'): ?>
-                <div style="margin-top:auto; padding-top:20px;">
-                    <div style="background:var(--bg-surface); border:1px solid var(--border-subtle); padding:15px; border-radius:8px; text-align:center;">
-                        <span style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:5px; text-transform:uppercase;">Sponsored</span>
-                        <strong style="font-size:0.85rem; color:var(--text-main); display:block;">Grammarly Premium</strong>
-                        <p style="font-size:0.8rem; color:var(--text-muted); margin:5px 0;">Write better essays.</p>
-                        <a href="#" style="font-size:0.8rem; color:var(--primary-blue); font-weight:700; text-decoration:none;">Learn More</a>
-                    </div>
-                </div>
-                <?php endif; ?>
             </nav>
         </aside>
         
@@ -133,7 +122,7 @@ require_once '../php/check_plan.php';
                     <input type="hidden" name="id" id="edit-resource-id">
                     <div class="input-group"><label class="category-label">Resource Title</label><input type="text" name="title" id="edit-title" class="input-field" required></div>
                     <div class="input-group"><label class="category-label">Course Name</label><input type="text" name="course_name" id="edit-course" class="input-field" required></div>
-                    <div class="input-group"><label class="category-label">Subject</label><input type="text" name="subject" id="edit-subject" class="input-field" required></div>
+                    <div class="input-group"><label class="category-label">Programme</label><input type="text" name="programme" id="edit-programme" class="input-field" required></div>
                     <div class="form-row-split">
                         <div class="input-group"><label class="category-label">Type</label>
                             <select class="category-select" name="type" id="edit-type" required>

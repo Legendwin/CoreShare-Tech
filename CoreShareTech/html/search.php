@@ -52,16 +52,6 @@ $numResults = $result ? $result->num_rows : 0;
                 <?php else: ?>
                     <a href="./login.php" class="nav-link" style="color:var(--primary-blue); font-weight:700;">Login</a>
                 <?php endif; ?>
-
-                <?php if ($userPlan === 'free'): ?>
-                <div style="margin-top:auto; padding-top:20px;">
-                    <div style="background:var(--bg-surface); border:1px solid var(--border-subtle); padding:15px; border-radius:8px; text-align:center;">
-                        <span style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:5px; text-transform:uppercase;">Sponsored</span>
-                        <strong style="font-size:0.85rem; color:var(--text-main); display:block;">Grammarly Premium</strong>
-                        <a href="#" style="font-size:0.8rem; color:var(--primary-blue); font-weight:700; text-decoration:none;">Learn More</a>
-                    </div>
-                </div>
-                <?php endif; ?>
             </nav>
         </aside>
 
@@ -73,13 +63,6 @@ $numResults = $result ? $result->num_rows : 0;
                     <div class="search-bar resource-search"><form action="search.php" method="GET"><input type="text" name="q" placeholder="Filter by course code, topic..." value="<?php echo htmlspecialchars($searchQuery); ?>"><button type="submit"><span><img src="../images/Search_Magnifying_Glass.svg" alt="Search"></span></button></form></div>
                 </div>
             </header>
-
-            <?php if ($userPlan === 'free'): ?>
-            <div style="width:100%; max-width:1100px; margin: 0 auto 24px auto; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:8px; padding:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                <div style="display:flex; align-items:center; gap:15px;"><span style="background:#FEE2E2; color:#EF4444; padding:4px 8px; border-radius:4px; font-size:0.75rem; font-weight:700;">AD</span><strong style="color:var(--text-main); font-size:0.95rem;">Master Your Classes with CourseHero</strong></div>
-                <a href="#" class="btn-card" style="padding:6px 12px; border:1px solid var(--primary-blue); color:var(--primary-blue); background:transparent; font-size:0.85rem;">View Solutions</a>
-            </div>
-            <?php endif; ?>
 
             <div class="resource-page-layout">
                 <div class="resource-main-col">
@@ -135,11 +118,6 @@ $numResults = $result ? $result->num_rows : 0;
                     <div class="modal-col-left">
                         <div class="file-preview-card"><div class="big-file-icon">📄</div><div class="file-name-display">filename.pdf</div></div>
                         <button class="btn-primary-download" style="width:100%;">Download Material</button>
-                        <?php if ($userPlan === 'free'): ?>
-                        <div style="margin-top: 15px; padding: 15px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 8px; text-align: center;">
-                            <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Sponsored</span><strong style="display: block; font-size: 0.9rem; margin: 5px 0; color:var(--text-main);">Audible - 1 Month Free</strong><a href="#" style="font-size: 0.8rem; color: var(--primary-blue); font-weight: 700; text-decoration: none;">Listen While You Study</a>
-                        </div>
-                        <?php endif; ?>
                     </div>
                     <div class="modal-col-right">
                         <div class="reviews-scroll-area"><div class="reviews-list"></div></div>
@@ -151,27 +129,6 @@ $numResults = $result ? $result->num_rows : 0;
                 </div>
             </div>
         </div>
-
-        <?php if ($userPlan === 'free'): ?>
-        <div id="exit-intent-modal" class="new-modal-overlay" style="z-index: 9999; display:none;">
-            <div class="new-modal-window" style="max-width: 450px; text-align: center; padding: 0;">
-                <div style="background: #FEE2E2; padding: 20px; border-radius: 16px 16px 0 0;"><h2 style="color: #DC2626; margin: 0;">Wait! Don't leave yet.</h2></div>
-                <div style="padding: 30px 20px;">
-                    <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.05rem;">Get <strong>CoreShare Pro</strong> today starting at just GH₵15 and completely remove all ads, upload limits, and wait times.</p>
-                    <a href="./billing.php" class="btn-card" style="background: var(--grad-primary); color: white; text-decoration: none; display:inline-block; padding: 12px 24px; margin-bottom: 10px;">See Plans</a>
-                    <button onclick="closeExitModal()" style="display:block; width:100%; background:none; border:none; color:var(--text-muted); text-decoration:underline; cursor:pointer; margin-top:10px;">Close</button>
-                </div>
-            </div>
-        </div>
-        <div id="download-interstitial" class="new-modal-overlay" style="z-index: 10000; display:none;">
-            <div class="new-modal-window" style="max-width: 450px; text-align: center; padding: 30px 20px;">
-                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Sponsor Message</span>
-                <h3 style="margin: 15px 0;">Master Your Classes with CourseHero</h3>
-                <div style="background: var(--bg-body); padding: 15px; border-radius: 8px; margin-bottom: 20px;"><strong id="dl-countdown" style="color: var(--primary-blue); font-size: 1.1rem;">Your download will begin in 5 seconds...</strong></div>
-                <button id="dl-skip-btn" class="btn-card" style="display: none; background: var(--success); color: white; border: none; width: 100%; padding: 12px; cursor:pointer;">Skip Ad & Download File</button>
-            </div>
-        </div>
-        <?php endif; ?>
 
         <script src="../js/script.js?v=<?php echo time(); ?>"></script>
     </body>

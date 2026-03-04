@@ -44,17 +44,6 @@ require_once '../php/check_plan.php';
                 <?php else: ?>
                     <a href="./login.php" class="nav-link" style="color:var(--primary-blue); font-weight:700;">Login</a>
                 <?php endif; ?>
-
-                <?php if ($userPlan === 'free'): ?>
-                <div style="margin-top:auto; padding-top:20px;">
-                    <div style="background:var(--bg-surface); border:1px solid var(--border-subtle); padding:15px; border-radius:8px; text-align:center;">
-                        <span style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:5px; text-transform:uppercase;">Sponsored</span>
-                        <strong style="font-size:0.85rem; color:var(--text-main); display:block;">Grammarly Premium</strong>
-                        <p style="font-size:0.8rem; color:var(--text-muted); margin:5px 0;">Write better essays.</p>
-                        <a href="#" style="font-size:0.8rem; color:var(--primary-blue); font-weight:700; text-decoration:none;">Learn More</a>
-                    </div>
-                </div>
-                <?php endif; ?>
             </nav>
         </aside>
         <main class="main-content">
