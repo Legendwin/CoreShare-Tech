@@ -1,7 +1,6 @@
 <?php
 ob_clean();
 header('Content-Type: application/json');
-session_start();
 require 'db_connect.php';
 
 $currentUserId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;

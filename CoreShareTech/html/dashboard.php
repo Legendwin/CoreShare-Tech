@@ -1,5 +1,4 @@
 <?php
-session_start();
 // ALLOW GUEST ACCESS
 require '../php/db_connect.php';
 

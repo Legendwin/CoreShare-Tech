@@ -1,5 +1,4 @@
 <?php
-session_start();
 require '../php/db_connect.php';
 $isLoggedIn = isset($_SESSION['user_id']);
 $userRole = $isLoggedIn ? $_SESSION['user_role'] : 'student';

@@ -1,6 +1,5 @@
 <?php
 ob_start();
-session_start();
 require 'db_connect.php';
 ob_end_clean();
 

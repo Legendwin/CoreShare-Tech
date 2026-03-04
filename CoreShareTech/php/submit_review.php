@@ -2,7 +2,6 @@
 ob_clean(); 
 header('Content-Type: application/json');
 
-session_start();
 require 'db_connect.php';
 
 if (!isset($_SESSION['user_id'])) {

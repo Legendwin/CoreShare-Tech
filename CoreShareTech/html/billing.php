@@ -1,5 +1,4 @@
 <?php
-session_start();
 require '../php/db_connect.php';
 require_once '../php/check_plan.php';
 

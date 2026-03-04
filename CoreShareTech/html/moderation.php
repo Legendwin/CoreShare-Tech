@@ -1,5 +1,4 @@
 <?php
-session_start();
 require '../php/db_connect.php';
 if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') { header("Location: dashboard.php"); exit; }
 $statsQuery = "SELECT COUNT(*) as total, SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) as published, SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending, SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected FROM resources";

@@ -1,5 +1,4 @@
 <?php
-session_start();
 require '../php/db_connect.php';
 
 // STRICT REDIRECT: Ensure user is logged in

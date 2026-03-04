@@ -1,5 +1,4 @@
 <?php
-session_start();
 require 'db_connect.php';
 
 // Check if user is logged in and Paystack returned a reference
