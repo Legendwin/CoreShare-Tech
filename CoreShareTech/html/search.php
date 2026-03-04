@@ -44,8 +44,11 @@ $numResults = $result ? $result->num_rows : 0;
                 <a href="./contact.php" class="nav-link">Contact</a>
                 <a href="./sources.php" class="nav-link">Other Resources</a>
                 
+                <?php if($isLoggedIn && isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'admin'): ?>
+                	<a href="./moderation.php" class="nav-link">Moderation</a>
+				<?php endif; ?>
                 <?php if($isLoggedIn): ?>
-                    <a href="../php/logout.php" class="nav-link" style="color:#EF4444; font-weight:700;">Logout</a>
+				    <a href="../php/logout.php" class="nav-link" style="color:#EF4444; font-weight:700;">Logout</a>
                 <?php else: ?>
                     <a href="./login.php" class="nav-link" style="color:var(--primary-blue); font-weight:700;">Login</a>
                 <?php endif; ?>
