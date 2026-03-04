@@ -24,6 +24,9 @@ if ($isLoggedIn && $userPlan === 'free') {
         <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
         <link rel="stylesheet" href="../css/resource.css?v=<?php echo time(); ?>">
         <script>const USER_IS_LOGGED_IN = <?php echo $isLoggedIn ? 'true' : 'false'; ?>; const USER_PLAN = '<?php echo $userPlan; ?>';</script>
+        <?php if ($userPlan === 'free'): ?>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3596644493360839" crossorigin="anonymous"></script>
+        <?php endif; ?>
     </head>
     <body>
         <div class="sidebar-overlay" id="sidebar-overlay"></div>

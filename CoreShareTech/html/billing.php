@@ -59,6 +59,9 @@ if (isset($_GET['plan']) && in_array($_GET['plan'], $allowed)) {
   <link rel="icon" type="image/png" href="../images/Gemini_Generated_Image_69zr6i69zr6i69zr.png" sizes="32x32">
   <link rel="stylesheet" href="../css/styles.css?v=<?php echo time(); ?>">
   <link rel="stylesheet" href="../css/home.css?v=<?php echo time(); ?>">
+  <?php if ($userPlan === 'free'): ?>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3596644493360839" crossorigin="anonymous"></script>
+  <?php endif; ?>
   <style>
       .checkout-container { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
       @media (max-width: 768px) { .checkout-container { grid-template-columns: 1fr; } }
@@ -74,7 +77,27 @@ if (isset($_GET['plan']) && in_array($_GET['plan'], $allowed)) {
       <a href="./search.php" class="nav-link">Search</a>
       <a href="./resource.php" class="nav-link">Resource</a>
       <a href="./contributions.php" class="nav-link">Contributions</a>
-      <?php if($isLoggedIn): ?><a href="../php/logout.php" class="nav-link" style="color:#EF4444; font-weight:700;">Logout</a><?php else: ?><a href="./login.php" class="nav-link" style="color:var(--primary-blue); font-weight:700;">Login</a><?php endif; ?>
+      <a href="./contact.php" class="nav-link">Contact</a>
+      <a href="./sources.php" class="nav-link">Other Resources</a>
+      <?php if($isLoggedIn && $userRole === 'admin'): ?>
+          <a href="./moderation.php" class="nav-link">Moderation</a>
+      <?php endif; ?>
+      <?php if($isLoggedIn): ?>
+          <a href="../php/logout.php" class="nav-link" style="color:#EF4444; font-weight:700;">Logout</a>
+      <?php else: ?>
+          <a href="./login.php" class="nav-link" style="color:var(--primary-blue); font-weight:700;">Login</a>
+      <?php endif; ?>
+
+      <?php if ($userPlan === 'free'): ?>
+      <div style="margin-top:auto; padding-top:20px;">
+          <div style="background:var(--bg-surface); border:1px solid var(--border-subtle); padding:15px; border-radius:8px; text-align:center;">
+              <span style="font-size:0.65rem; color:var(--text-muted); display:block; margin-bottom:5px; text-transform:uppercase;">Sponsored</span>
+              <strong style="font-size:0.85rem; color:var(--text-main); display:block;">Grammarly Premium</strong>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin:5px 0;">Write better essays.</p>
+              <a href="#" style="font-size:0.8rem; color:var(--primary-blue); font-weight:700; text-decoration:none;">Learn More</a>
+          </div>
+      </div>
+      <?php endif; ?>
     </nav>
   </aside>
 

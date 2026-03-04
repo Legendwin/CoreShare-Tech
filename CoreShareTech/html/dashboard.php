@@ -43,6 +43,9 @@ if ($isLoggedIn) {
             .badge-semester { background: #D1FAE5; color: #059669; border: 1px solid #059669; }
             .badge-exam_pass { background: #FEF3C7; color: #D97706; border: 1px solid #D97706; }
         </style>
+        <?php if ($userPlan === 'free'): ?>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3596644493360839" crossorigin="anonymous"></script>
+        <?php endif; ?>
 	</head>
 	<body>
         <div class="sidebar-overlay" id="sidebar-overlay"></div>
