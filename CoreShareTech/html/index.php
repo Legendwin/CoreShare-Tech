@@ -77,9 +77,9 @@ if ($statsResult = $conn->query($statsQuery)) {
         <h3 class="stats-title">Quick Stats</h3>
         <p class="stats-desc">Community contributions, downloads, and recent uploads at a glance.</p>
         <ul class="stats-list">
-          <li><strong><?php echo number_format($totalResources); ?></strong> resources</li>
-          <li><strong><?php echo number_format($totalDownloads); ?></strong> downloads</li>
-          <li><strong><?php echo number_format($totalContributors); ?></strong> contributors</li>
+          <li><strong><?php echo number_format($totalResources); ?> +</strong> resources</li>
+          <li><strong><?php echo number_format($totalDownloads); ?> +</strong> downloads</li>
+          <li><strong><?php echo number_format($totalContributors); ?> +</strong> contributors</li>
         </ul>
       </aside>
     </section>

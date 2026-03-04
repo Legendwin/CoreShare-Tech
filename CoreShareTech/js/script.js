@@ -477,3 +477,83 @@ window.togglePassword = function(inputId, iconSpan) {
         iconSpan.style.color = 'var(--text-muted)'; 
     }
 };
+
+// ---------------------------------------------------------
+// 9. Edit Resource Modal & Submission
+// ---------------------------------------------------------
+window.openEditModal = function(id) {
+    const modal = document.getElementById('edit-modal');
+    if (!modal) return;
+
+    // Fetch the existing resource details to pre-fill the form
+    fetch(`../php/get_resource_details.php?id=${id}`, { credentials: 'same-origin' })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            const rsrc = data.resource;
+            // Populate the form fields
+            document.getElementById('edit-resource-id').value = rsrc.id;
+            document.getElementById('edit-title').value = rsrc.title;
+            document.getElementById('edit-course').value = rsrc.course_name || '';
+            document.getElementById('edit-programme').value = rsrc.programme || '';
+            document.getElementById('edit-type').value = rsrc.type || 'Lecture Notes';
+            document.getElementById('edit-grade').value = rsrc.grade_level || 'Year 1';
+            
+            // Open the modal
+            modal.classList.add('open');
+        } else {
+            showToast('Failed to load resource details', 'error');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        showToast('Connection error', 'error');
+    });
+};
+
+// Handle the "Save Changes" button click
+document.addEventListener('DOMContentLoaded', function() {
+    const editForm = document.getElementById('edit-resource-form');
+    if (editForm) {
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Stop page from refreshing instantly
+            
+            // Grab the security token
+            const meta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = meta ? meta.getAttribute('content') : '';
+            
+            // Package the updated data
+            const formData = {
+                id: document.getElementById('edit-resource-id').value,
+                title: document.getElementById('edit-title').value,
+                course_name: document.getElementById('edit-course').value,
+                programme: document.getElementById('edit-programme').value,
+                type: document.getElementById('edit-type').value,
+                grade_level: document.getElementById('edit-grade').value,
+                csrf_token: csrfToken
+            };
+
+            // Send to the server
+            fetch('../php/edit_resource.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify(formData)
+            })
+            .then(r => r.json())
+            .then(d => {
+                if (d.success) {
+                    showToast('Resource updated successfully!', 'success');
+                    document.getElementById('edit-modal').classList.remove('open');
+                    setTimeout(() => location.reload(), 1000); // Reload table to show new name
+                } else {
+                    showToast(d.message || 'Error updating resource', 'error');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast('Network Error', 'error');
+            });
+        });
+    }
+});
