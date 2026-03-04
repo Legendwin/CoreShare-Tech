@@ -82,12 +82,8 @@ $numResults = $result ? $result->num_rows : 0;
                                 elseif ($fileExt == 'pptx' || $fileExt == 'ppt') { $icon = "📙"; $bgColor = "#FFEDD5"; $textColor = "#F97316"; }
                                 echo '<div class="card"><div class="card-image" style="background:'.$bgColor.';display:flex;align-items:center;justify-content:center;flex-direction:column;"><div style="font-size:4rem;">'.$icon.'</div><div style="font-weight:700;color:'.$textColor.';margin-top:10px;">'.$fileExt.'</div></div><div class="card-body"><span class="tag">'.htmlspecialchars($row['programme']).'</span><div class="card-title">'.htmlspecialchars($row['title']).'</div><div class="card-meta"><span>'.htmlspecialchars($row['type']).'</span></div><button class="btn-card" onclick="openResourceModal('.$row['id'].')">View Details</button></div></div>';
                             }
-                        } else { 
-                            if ($userPlan === 'free') {
-                                echo '<div style="grid-column: 1 / -1; text-align:center; padding: 40px 20px; background:var(--bg-surface); border:1px dashed var(--border-subtle); border-radius:12px;"><div style="font-size:3rem; margin-bottom:15px;">📚</div><h3 style="color:var(--text-main); margin-bottom:10px;">Didn\'t find what you need?</h3><p style="color:var(--text-muted); margin-bottom:20px;">Check out our sponsor for thousands of verified textbook solutions.</p><a href="#" class="btn-card" style="background:var(--primary-blue); color:white; text-decoration:none;">Search Course Hero</a></div>';
-                            } else {
-                                echo "<p style='color:#64748B; padding:20px; grid-column:1/-1;'>No resources match your search.</p>"; 
-                            }
+                        } else {
+                            echo "<p style='color:#64748B; padding:20px; grid-column:1/-1;'>No resources match your search.</p>"; 
                         }
                         ?>
                     </div>
