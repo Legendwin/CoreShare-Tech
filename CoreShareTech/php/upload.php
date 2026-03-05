@@ -1,5 +1,6 @@
 <?php
 require 'db_connect.php';
+require 'spaces_connect.php'; // ADDED: Connect to the Cloud
 
 function redirectWithError($msg) {
     header("Location: ../html/resource.php?error=" . urlencode($msg));
@@ -28,7 +29,7 @@ if ($userPlan === 'free') {
     }
 }
 
-// Check for PHP post_max_size overflow (File too big crash)
+// Check for PHP post_max_size overflow
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
     $maxPost = ini_get('post_max_size');
     redirectWithError("File exceeds server limit ($maxPost). Please upload a smaller file.");
@@ -53,29 +54,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     if ($checkStmt->num_rows > 0) {
         $checkStmt->close();
-        // UPDATED ERROR MESSAGE HERE:
         redirectWithError("A resource with this title already exists. Please change the file name/title and try uploading again.");
     }
     $checkStmt->close();
-    // ---------------------------------------------------------------
 
-    $target_dir = "../uploads/";
-    if (!file_exists($target_dir)) mkdir($target_dir, 0755, true);
-    
     // Check for upload errors
     if (!isset($_FILES['resource_file']) || $_FILES['resource_file']['error'] !== UPLOAD_ERR_OK) {
         $errorCode = $_FILES['resource_file']['error'] ?? 4; 
-        $phpFileUploadErrors = [
-            1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
-            2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive in the HTML form',
-            3 => 'The uploaded file was only partially uploaded',
-            4 => 'No file was uploaded',
-            6 => 'Missing a temporary folder',
-            7 => 'Failed to write file to disk.',
-            8 => 'A PHP extension stopped the file upload.',
-        ];
-        $errorMsg = $phpFileUploadErrors[$errorCode] ?? 'Unknown upload error';
-        redirectWithError($errorMsg);
+        redirectWithError("Upload Error Code: " . $errorCode);
     }
 
     $file_name = basename($_FILES["resource_file"]["name"]);
@@ -88,17 +74,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!in_array($file_ext, $allowed_exts)) {
         redirectWithError("Invalid file type. Allowed: PDF, Word, PowerPoint, Text.");
     }
-
     if ($file_size > 524288000) { 
         redirectWithError("File is too large (Max 500MB).");
     }
 
+    // Generate a unique file name and define the Cloud path
     $new_file_name = time() . "_" . uniqid() . "." . $file_ext;
-    $target_file = $target_dir . $new_file_name;
+    $s3_key = "uploads/" . $new_file_name; // We will save this exact path in the DB
 
-    if (move_uploaded_file($file_tmp, $target_file)) {
+    try {
+        // BEAM THE FILE TO THE CLOUD LOCKER
+        $s3->putObject([
+            'Bucket'     => $spaces_bucket,
+            'Key'        => $s3_key,
+            'SourceFile' => $file_tmp,
+            'ACL'        => 'private', // Critical: Keep the file private so users can't bypass your app!
+        ]);
+
+        // Save the cloud path into the database
         $stmt = $conn->prepare("INSERT INTO resources (title, course_name, type, programme, grade_level, file_path, uploaded_by, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')");
-        $stmt->bind_param("ssssssi", $title, $course_name, $type, $programme, $grade, $target_file, $uploader_id);
+        $stmt->bind_param("ssssssi", $title, $course_name, $type, $programme, $grade, $s3_key, $uploader_id);
 
         if ($stmt->execute()) {
             $stmt->close();
@@ -111,11 +106,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: ../html/resource.php?success=uploaded_pending");
             exit();
         } else {
-            if(file_exists($target_file)) unlink($target_file);
+            // If the DB fails, delete the file from the cloud so we don't waste space
+            $s3->deleteObject(['Bucket' => $spaces_bucket, 'Key' => $s3_key]);
             redirectWithError("Database Error: " . $conn->error);
         }
-    } else {
-        redirectWithError("Failed to move uploaded file.");
+    } catch (Aws\Exception\AwsException $e) {
+        redirectWithError("Cloud Storage Error: Could not upload file.");
     }
 }
 $conn->close();
