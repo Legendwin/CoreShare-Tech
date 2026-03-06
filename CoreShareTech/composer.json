@@ -2,6 +2,7 @@
     "name": "coreshare-tech/project",
     "description": "CoreShare Tech Project",
     "require": {
-        "phpmailer/phpmailer": "^7.0"
+        "phpmailer/phpmailer": "^7.0",
+        "aws/aws-sdk-php": "^3.372"
     }
 }
