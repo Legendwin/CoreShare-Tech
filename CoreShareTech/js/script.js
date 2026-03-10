@@ -406,15 +406,17 @@ window.openResourceModal = function(identifier) {
                                     skipBtn.onclick = () => {
                                         interstitial.classList.remove('open');
                                         setTimeout(() => interstitial.style.display = 'none', 300);
-                                        window.location.href = `../php/download.php?file=${encodeURIComponent(rsrc.file_path)}`;
+                                        // Opens the secure cloud link in a background process so the Javascript doesn't get killed!
+                                        window.open(`../php/download.php?file=${encodeURIComponent(rsrc.file_path)}`, '_blank');
                                         setTimeout(() => updateDashboardStats(), 1500);
                                     };
                                 }
                             }, 1000);
                         } else {
                             // Fallback if interstitial HTML is missing
-                            window.location.href = `../php/download.php?file=${encodeURIComponent(rsrc.file_path)}`;
-                            setTimeout(() => updateDashboardStats(), 1500); 
+                            // Opens the secure cloud link in a background process so the Javascript doesn't get killed!
+                            window.open(`../php/download.php?file=${encodeURIComponent(rsrc.file_path)}`, '_blank');
+                            setTimeout(() => updateDashboardStats(), 1500);
                         }
                     } else {
                         // Pro Users - Instant Download
