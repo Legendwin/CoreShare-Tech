@@ -11,10 +11,17 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-// 1. Total Downloads
-$downloadResult = $conn->query("SELECT SUM(downloads) as total FROM resources WHERE uploaded_by = '$userId'");
-$totalDownloads = ($downloadResult && $row = $downloadResult->fetch_assoc()) ? ($row['total'] ?? 0) : 0;
+// 1. Downloads Today (From user_counters)
+$today = date('Y-m-d');
+$downloadResult = $conn->query("SELECT downloads_today, downloads_date FROM user_counters WHERE user_id = '$userId'");
+$totalDownloads = 0;
 
+if ($downloadResult && $row = $downloadResult->fetch_assoc()) {
+    // Only show the count if the date matches today!
+    if ($row['downloads_date'] === $today) {
+        $totalDownloads = $row['downloads_today'];
+    }
+}
 // 2. Resources Shared
 $resCountResult = $conn->query("SELECT COUNT(*) as count FROM resources WHERE uploaded_by = '$userId' AND status = 'published'");
 $totalResources = ($resCountResult && $row = $resCountResult->fetch_assoc()) ? $row['count'] : 0;

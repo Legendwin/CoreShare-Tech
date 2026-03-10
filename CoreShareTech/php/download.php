@@ -16,39 +16,42 @@ if (isset($_GET['file'])) {
     $userPlan = $_SESSION['plan'] ?? 'free';
     $userId = intval($_SESSION['user_id']);
     
-    // --- 1. DAILY LIMITS ---
-    if ($userPlan === 'free') {
-        $today = date('Y-m-d');
-        
-        $stmt = $conn->prepare("SELECT downloads_date, downloads_today FROM user_counters WHERE user_id = ?");
-        $stmt->bind_param('i', $userId);
-        $stmt->execute();
-        $stmt->bind_result($db_date, $db_today);
-        $hasRow = $stmt->fetch();
-        $stmt->close();
+    // --- 1. DAILY TRACKING (For ALL Users) ---
+    $today = date('Y-m-d');
+    
+    $stmt = $conn->prepare("SELECT downloads_date, downloads_today FROM user_counters WHERE user_id = ?");
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $stmt->bind_result($db_date, $db_today);
+    $hasRow = $stmt->fetch();
+    $stmt->close();
 
-        $freeDownloadLimit = 5;
-
-        if (!$hasRow) {
-            $db_today = 1;
-            $insert = $conn->prepare("INSERT INTO user_counters (user_id, uploads_count, downloads_today, downloads_date) VALUES (?, 0, 1, ?)");
-            $insert->bind_param('is', $userId, $today);
-            $insert->execute();
-            $insert->close();
-        } else {
-            if ($db_date !== $today) {
-                $db_today = 0;
-            }
-            if ($db_today >= $freeDownloadLimit) {
-                $conn->close();
-                die('Free accounts are limited to ' . $freeDownloadLimit . ' downloads per day. Please <a href="../html/billing.php">upgrade</a>.');
-            }
-            $u = $conn->prepare("UPDATE user_counters SET downloads_today = downloads_today + 1, downloads_date = ? WHERE user_id = ?");
-            $u->bind_param('si', $today, $userId); 
-            $u->execute(); 
-            $u->close();
+    if (!$hasRow) {
+        $db_today = 0; // Starts at 0, we will add +1 below
+        $insert = $conn->prepare("INSERT INTO user_counters (user_id, uploads_count, downloads_today, downloads_date) VALUES (?, 0, 0, ?)");
+        $insert->bind_param('is', $userId, $today);
+        $insert->execute();
+        $insert->close();
+    } else {
+        // Reset counter if it is a new day
+        if ($db_date !== $today) {
+            $db_today = 0;
         }
     }
+
+    // --- 2. ENFORCE LIMITS (Only for Free Users) ---
+    $freeDownloadLimit = 5;
+    if ($userPlan === 'free' && $db_today >= $freeDownloadLimit) {
+        $conn->close();
+        die('Free accounts are limited to ' . $freeDownloadLimit . ' downloads per day. Please <a href="../html/billing.php">upgrade</a>.');
+    }
+
+    // --- 3. INCREMENT DAILY COUNTER (For EVERYONE) ---
+    $new_today_count = $db_today + 1;
+    $u = $conn->prepare("UPDATE user_counters SET downloads_today = ?, downloads_date = ? WHERE user_id = ?");
+    $u->bind_param('isi', $new_today_count, $today, $userId); 
+    $u->execute(); 
+    $u->close();
     
     // --- 2. GLOBAL RESOURCE COUNTER ---
     $filenameOnly = basename($filepath);
