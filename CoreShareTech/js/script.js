@@ -362,8 +362,8 @@ window.openResourceModal = function(identifier) {
                     previewCard.style.padding = '0'; // Remove padding so the PDF touches the edges
                     previewCard.style.overflow = 'hidden';
                 } else if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) {
-                    // Embed Images directly
-                    previewCard.innerHTML = `<img src="../php/preview.php?file=${encodeURIComponent(rsrc.file_path)}" style="width:100%; height:350px; object-fit:contain; border-radius:12px; background: var(--bg-body);">`;
+                    // Embed Images directly & disable right-click / dragging
+                    previewCard.innerHTML = `<img src="../php/preview.php?file=${encodeURIComponent(rsrc.file_path)}" oncontextmenu="return false;" draggable="false" style="width:100%; height:350px; object-fit:contain; border-radius:12px; background: var(--bg-body); pointer-events: none;">`;
                     previewCard.style.padding = '0';
                 } else {
                     // Fallback to beautiful Icons for Word/PPT (Since browsers can't natively render them)

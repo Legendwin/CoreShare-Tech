@@ -34,6 +34,11 @@ if (isset($_GET['file'])) {
         $request = $s3->createPresignedRequest($cmd, '+15 minutes');
         $presignedUrl = (string) $request->getUri();
 
+        // Add the magic tag to hide the PDF Download/Print toolbar
+        if ($ext === 'pdf') {
+            $presignedUrl .= '#toolbar=0&navpanes=0&scrollbar=0';
+        }
+
         // 3. Redirect the iframe to the secure preview link
         header("Location: " . $presignedUrl);
         exit;
