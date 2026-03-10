@@ -332,7 +332,27 @@ window.openResourceModal = function(identifier) {
             m.querySelector('.resource-type-badge').innerText = rsrc.type;
             m.querySelector('.course-info').innerText = rsrc.course_name || rsrc.subject;
             const ext = (rsrc.file_path || '').split('.').pop().toLowerCase();
-            m.querySelector('.file-name-display').innerText = `${rsrc.title}.${ext}`;
+            // --- NEW FILE PREVIEW LOGIC ---
+            const previewCard = m.querySelector('.file-preview-card');
+            if (previewCard) {
+                if (ext === 'pdf') {
+                    // Embed PDFs directly using our new preview.php secure link
+                    previewCard.innerHTML = `<iframe src="../php/preview.php?file=${encodeURIComponent(rsrc.file_path)}" width="100%" height="350px" style="border:none; border-radius:12px;"></iframe>`;
+                    previewCard.style.padding = '0'; // Remove padding so the PDF touches the edges
+                    previewCard.style.overflow = 'hidden';
+                } else if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) {
+                    // Embed Images directly
+                    previewCard.innerHTML = `<img src="../php/preview.php?file=${encodeURIComponent(rsrc.file_path)}" style="width:100%; height:350px; object-fit:contain; border-radius:12px; background: var(--bg-body);">`;
+                    previewCard.style.padding = '0';
+                } else {
+                    // Fallback to beautiful Icons for Word/PPT (Since browsers can't natively render them)
+                    let icon = '📄';
+                    if (['doc', 'docx'].includes(ext)) icon = '📘';
+                    if (['ppt', 'pptx'].includes(ext)) icon = '📙';
+                    previewCard.innerHTML = `<div class="big-file-icon">${icon}</div><div class="file-name-display" style="font-weight:700; color:var(--text-main); word-break:break-word; padding:0 10px;">${escapeHtml(rsrc.title)}.${ext}</div>`;
+                    previewCard.style.padding = '40px';
+                }
+            }
             const dlBtn = m.querySelector('.btn-primary-download');
             
             // Handle Download Logic (Including Interstitial for Free Users)

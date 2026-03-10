@@ -73,7 +73,7 @@ $rejPct = round(($stats['rejected'] / $total) * 100);
                     <thead>
                         <tr>
                           <th>Resource Title</th>
-                          <th>Subject</th>
+                          <th>Course Name</th>
                           <th>Type</th>
                           <th>Date</th>
                           <th>Status</th>
@@ -85,7 +85,7 @@ $rejPct = round(($stats['rejected'] / $total) * 100);
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
-                                echo '<tr><td style="font-weight:600;">'.htmlspecialchars($row['title']).'</td><td>'.htmlspecialchars($row['subject']).'</td><td>'.htmlspecialchars($row['type']).'</td><td>'.date("M d, Y", strtotime($row['created_at'])).'</td><td><span class="status-dot" style="background-color:#F59E0B;"></span>Pending</td><td><button class="btn-approve" data-id="'.$row['id'].'" style="background:var(--success); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:5px;">Approve</button><button class="btn-reject" data-id="'.$row['id'].'" style="background:#EF4444; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">Reject</button></td></tr>';
+                                echo '<tr><td style="font-weight:600;">'.htmlspecialchars($row['title']).'</td><td>'.htmlspecialchars($row['course_name']).'</td><td>'.htmlspecialchars($row['type']).'</td><td>'.date("M d, Y", strtotime($row['created_at'])).'</td><td><span class="status-dot" style="background-color:#F59E0B;"></span>Pending</td><td><button class="btn-approve" data-id="'.$row['id'].'" style="background:var(--success); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:5px;">Approve</button><button class="btn-reject" data-id="'.$row['id'].'" style="background:#EF4444; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">Reject</button></td></tr>';
                             }
                         } else {
                           echo '<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--text-muted);">No pending items to review.</td></tr>';
