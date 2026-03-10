@@ -407,14 +407,14 @@ window.openResourceModal = function(identifier) {
                                         interstitial.classList.remove('open');
                                         setTimeout(() => interstitial.style.display = 'none', 300);
                                         window.location.href = `../php/download.php?file=${encodeURIComponent(rsrc.file_path)}`;
-                                        updateDashboardStats();
+                                        setTimeout(() => updateDashboardStats(), 1500);
                                     };
                                 }
                             }, 1000);
                         } else {
                             // Fallback if interstitial HTML is missing
                             window.location.href = `../php/download.php?file=${encodeURIComponent(rsrc.file_path)}`;
-                            updateDashboardStats();
+                            setTimeout(() => updateDashboardStats(), 1500); 
                         }
                     } else {
                         // Pro Users - Instant Download

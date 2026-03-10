@@ -1,7 +1,7 @@
 <?php
 ob_start();
 require 'db_connect.php';
-require 'spaces_connect.php'; // <-- THIS IS CRITICAL: Connects to DigitalOcean
+require 'spaces_connect.php'; // <-- THIS CONNECTS TO THE CLOUD
 ob_end_clean();
 
 if (!isset($_SESSION['user_id'])) {
@@ -10,14 +10,13 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 if (isset($_GET['file'])) {
-    // Clean up the file path for the cloud
     $filepath = $_GET['file'];
     $s3_key = ltrim($filepath, './'); 
 
     $userPlan = $_SESSION['plan'] ?? 'free';
     $userId = intval($_SESSION['user_id']);
     
-    // --- 1. ENFORCE & COUNT DAILY LIMITS (Bulletproof) ---
+    // --- 1. DAILY LIMITS ---
     if ($userPlan === 'free') {
         $today = date('Y-m-d');
         
@@ -31,25 +30,19 @@ if (isset($_GET['file'])) {
         $freeDownloadLimit = 5;
 
         if (!$hasRow) {
-            // New user missing from table: Create them
             $db_today = 1;
             $insert = $conn->prepare("INSERT INTO user_counters (user_id, uploads_count, downloads_today, downloads_date) VALUES (?, 0, 1, ?)");
             $insert->bind_param('is', $userId, $today);
             $insert->execute();
             $insert->close();
         } else {
-            // Reset for a new day
             if ($db_date !== $today) {
                 $db_today = 0;
             }
-
-            // Check limit
             if ($db_today >= $freeDownloadLimit) {
                 $conn->close();
                 die('Free accounts are limited to ' . $freeDownloadLimit . ' downloads per day. Please <a href="../html/billing.php">upgrade</a>.');
             }
-
-            // Increment count
             $u = $conn->prepare("UPDATE user_counters SET downloads_today = downloads_today + 1, downloads_date = ? WHERE user_id = ?");
             $u->bind_param('si', $today, $userId); 
             $u->execute(); 
@@ -57,26 +50,24 @@ if (isset($_GET['file'])) {
         }
     }
     
-    // --- 2. UPDATE GLOBAL RESOURCE DOWNLOADS (Bulletproof) ---
+    // --- 2. GLOBAL RESOURCE COUNTER ---
     $filenameOnly = basename($filepath);
     $stmt = $conn->prepare("UPDATE resources SET downloads = downloads + 1 WHERE file_path LIKE CONCAT('%', ?, '%')");
     $stmt->bind_param("s", $filenameOnly);
     $stmt->execute();
     $stmt->close();
 
-    // --- 3. SERVE FILE FROM DIGITALOCEAN SPACES ---
+    // --- 3. SERVE FILE FROM CLOUD ---
     try {
         $cmd = $s3->getCommand('GetObject', [
             'Bucket' => $spaces_bucket,
             'Key'    => $s3_key,
-            'ResponseContentDisposition' => 'attachment' // Forces download
+            'ResponseContentDisposition' => 'attachment'
         ]);
 
-        // Generate the 15-minute VIP access link
         $request = $s3->createPresignedRequest($cmd, '+15 minutes');
         $presignedUrl = (string) $request->getUri();
 
-        // Redirect user to the secure cloud link
         header("Location: " . $presignedUrl);
         exit;
         
