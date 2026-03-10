@@ -393,3 +393,33 @@ input[type="range"]::-moz-range-thumb:hover {
     .reviews-scroll-area { max-height: 350px; }
     .new-modal-header { position: sticky; top: 0; z-index: 10; }
 }
+
+/* --- SECURE PREVIEW: BLOCK PRINTING & TEXT SELECTION --- */
+
+/* 1. Prevent highlighting text or dragging images */
+.file-preview-card {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+/* 2. Completely blank out the screen if they try to Print */
+@media print {
+    /* Hide the entire website */
+    body * {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+    }
+    
+    /* Inject a security warning onto the blank printed page */
+    body::before {
+        content: "Security Alert: Printing and saving are disabled for secure documents on CoreShare Tech.";
+        display: block !important;
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: black;
+        padding-top: 100px;
+    }
+}

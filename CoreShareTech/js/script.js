@@ -356,17 +356,24 @@ window.openResourceModal = function(identifier) {
             // --- NEW FILE PREVIEW LOGIC ---
             const previewCard = m.querySelector('.file-preview-card');
             if (previewCard) {
+                
+                // --- SECURITY: Block Right-Clicking anywhere inside the preview card ---
+                previewCard.oncontextmenu = function(e) {
+                    e.preventDefault();
+                    return false;
+                };
+
                 if (ext === 'pdf') {
                     // Embed PDFs directly using our new preview.php secure link
                     previewCard.innerHTML = `<iframe src="../php/preview.php?file=${encodeURIComponent(rsrc.file_path)}" width="100%" height="350px" style="border:none; border-radius:12px;"></iframe>`;
-                    previewCard.style.padding = '0'; // Remove padding so the PDF touches the edges
+                    previewCard.style.padding = '0'; 
                     previewCard.style.overflow = 'hidden';
                 } else if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) {
-                    // Embed Images directly & disable right-click / dragging
+                    // Embed Images directly (Includes internal right-click & drag blocks)
                     previewCard.innerHTML = `<img src="../php/preview.php?file=${encodeURIComponent(rsrc.file_path)}" oncontextmenu="return false;" draggable="false" style="width:100%; height:350px; object-fit:contain; border-radius:12px; background: var(--bg-body); pointer-events: none;">`;
                     previewCard.style.padding = '0';
                 } else {
-                    // Fallback to beautiful Icons for Word/PPT (Since browsers can't natively render them)
+                    // Fallback to beautiful Icons for Word/PPT
                     let icon = '📄';
                     if (['doc', 'docx'].includes(ext)) icon = '📘';
                     if (['ppt', 'pptx'].includes(ext)) icon = '📙';
