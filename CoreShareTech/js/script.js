@@ -120,6 +120,27 @@ window.openCustomConfirm = function(message, callback) {
 // 4. Global Event Delegation
 // ---------------------------------------------------------
 document.addEventListener('click', function(e) {
+    // --- STAR RATING HOVER LOGIC ---
+    // 1. Light up previous stars on hover
+    document.addEventListener('mouseover', function(e) {
+        const starSpan = e.target.closest('.star-select-row span');
+        if(starSpan) {
+            const val = parseInt(starSpan.getAttribute('data-v'));
+            starSpan.parentElement.querySelectorAll('span').forEach(s => {
+                s.style.color = parseInt(s.getAttribute('data-v')) <= val ? '#F59E0B' : 'var(--border-subtle)';
+            });
+        }
+    });
+
+    // 2. Remove hover effect when mouse leaves (Restores clicked state)
+    document.addEventListener('mouseout', function(e) {
+        const starRow = e.target.closest('.star-select-row');
+        if (starRow) {
+            starRow.querySelectorAll('span').forEach(s => {
+                s.style.color = ''; // Let the CSS .active class take over again
+            });
+        }
+    });
     // Star Selection
     const starSpan = e.target.closest('.star-select-row span');
     if(starSpan) {
@@ -403,16 +424,38 @@ window.openResourceModal = function(identifier) {
                 };
             }
 
+            // --- FIX 2 & 3: AVERAGE RATING & EMPTY STARS ---
+            let totalStars = 0;
+            const starDisplay = m.querySelector('.star-display');
             const reviewsList = m.querySelector('.reviews-list');
             reviewsList.innerHTML = '';
-            if(d.reviews.length === 0) { reviewsList.innerHTML = '<div style="text-align:center; padding:20px; color:#cbd5e1;">No reviews yet.</div>'; } 
-            else {
+
+            if(d.reviews.length === 0) { 
+                reviewsList.innerHTML = '<div style="text-align:center; padding:20px; color:#cbd5e1;">No reviews yet. Be the first!</div>'; 
+                if(starDisplay) {
+                    starDisplay.innerText = '☆☆☆☆☆';
+                    starDisplay.style.color = '#CBD5E1';
+                }
+            } else {
                 d.reviews.forEach(rv => {
+                    totalStars += parseInt(rv.rating);
+                    
+                    // Generate filled and empty stars (e.g., ★★★☆☆)
+                    const filled = '★'.repeat(rv.rating);
+                    const empty = '☆'.repeat(5 - rv.rating);
+                    
                     const div = document.createElement('div');
                     div.className = 'modern-review-item';
-                    div.innerHTML = `<div class="modern-avatar">${escapeHtml((rv.full_name || 'U')[0])}</div><div class="modern-review-content"><div class="m-review-header"><span class="m-user-name">${escapeHtml(rv.full_name)}</span><span class="m-stars">${'\u2605'.repeat(rv.rating)}</span></div><div class="m-comment">${escapeHtml(rv.comment)}</div></div>`;
+                    div.innerHTML = `<div class="modern-avatar">${escapeHtml((rv.full_name || 'U')[0])}</div><div class="modern-review-content"><div class="m-review-header"><span class="m-user-name">${escapeHtml(rv.full_name)}</span><span class="m-stars">${filled}${empty}</span></div><div class="m-comment">${escapeHtml(rv.comment)}</div></div>`;
                     reviewsList.appendChild(div);
                 });
+                
+                // Calculate and update the Header Average
+                const avg = Math.round(totalStars / d.reviews.length);
+                if(starDisplay) {
+                    starDisplay.innerText = '★'.repeat(avg) + '☆'.repeat(5 - avg);
+                    starDisplay.style.color = '#F59E0B'; // Turn it Gold!
+                }
             }
         } else { showToast('Resource not found', 'error'); m.classList.remove('open'); }
     })
